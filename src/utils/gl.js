@@ -95,3 +95,7 @@ export function bindUnifrom4fv(gl, unifromName, data, program) {
   gl.uniformMatrix4fv(uniform4f, false, data);
   return uniform4f
 }
+
+export function setUnifrom4fv(gl, location, data) {
+  gl.uniformMatrix4fv(location, false, data);
+}
