@@ -5,7 +5,7 @@ import { SHADER_PARAMS } from '../../utils/name'
 import { setMatrixRotate } from '../../utils/math'
 export default class Plane {
     constructor(props) {
-
+        this.type = 'PlaneMesh'
         this.gl = props.gl
         this.camera = props.camera
        
@@ -71,7 +71,7 @@ export default class Plane {
         this.scaleMatrix = mat4.create()
     }
 
-    getModelMatrix() {
+    initModelMatrix() {
        return mat4.multiply(
             mat4.create(),
             this.scaleMatrix, 
@@ -82,6 +82,9 @@ export default class Plane {
             )
     }
 
+    /**
+     * 更新模型网格本身的模型矩阵、同时应用父级的模型矩阵
+     */
     updateModelMatrix() {
         mat4.multiply(
             this.modelMatrix, 
@@ -90,6 +93,8 @@ export default class Plane {
                 mat4.create(), 
                 this.translateMatrix, 
                 this.rotateMatrix))
+        let parentMatrix = this.parent.modelMatrix || mat4.create()
+        mat4.multiply(this.modelMatrix, this.modelMatrix, parentMatrix)
     }
 
     /**
@@ -107,13 +112,18 @@ export default class Plane {
      * @param {*} rotateValues 
      */
     rotate(rotateValues) {
+        // 更新网格本身记录的旋转角度
         this.rotation[0] += rotateValues[0]
         this.rotation[1] += rotateValues[1]
         this.rotation[2] += rotateValues[2]
 
-        mat4.rotateX(this.modelMatrix, this.modelMatrix, rotateValues[0])
-        mat4.rotateY(this.modelMatrix, this.modelMatrix, rotateValues[1])
-        mat4.rotateZ(this.modelMatrix, this.modelMatrix, rotateValues[2])
+        // 更新旋转矩阵
+        mat4.rotateX(this.rotateMatrix, this.rotateMatrix, rotateValues[0])
+        mat4.rotateY(this.rotateMatrix, this.rotateMatrix, rotateValues[1])
+        mat4.rotateZ(this.rotateMatrix, this.rotateMatrix, rotateValues[2])
+
+        // 更新模型矩阵
+        this.updateModelMatrix()
     }
 
     /**
@@ -130,7 +140,7 @@ export default class Plane {
 
         
         this.setModelMatrixs()
-        this.modelMatrix = this.getModelMatrix()
+        this.modelMatrix = this.initModelMatrix()
         let u_modelMatrixLocation = glUtils.bindUnifrom4fv(this.gl, 'u_modelMatrix', this.modelMatrix, this.program)
         this.addShaderUnifroms(u_modelMatrixLocation, SHADER_PARAMS.UNIFROM, this.modelMatrix)
     }
@@ -156,10 +166,17 @@ export default class Plane {
         })
     }
 
+    /**
+     * 设置 parent 节点
+     * @param {*} parent 
+     */
+    setParent(parent) {
+        this.parent = parent
+    }
+
     draw() {
         this.gl.useProgram(this.program)
 
-        // console.log(this.modelMatrix)
         this.updateShaderUnifroms()
 
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4)
