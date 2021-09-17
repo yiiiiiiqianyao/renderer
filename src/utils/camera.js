@@ -18,13 +18,24 @@ export default class Camera {
             up: this.up
         })
         
+        // 初始化透视矩阵
         this.initPerspectiveMatrix()
         
     }
 
+    /**
+     * 初始化透视矩阵
+     */
     initPerspectiveMatrix() {
         this.perspectiveMatrix = mat4.create()
         mat4.perspective(this.perspectiveMatrix, this.fov * Math.PI / 180, this.aspect, this.near, this.far);
+    }
+
+    /**
+     * 更新透视矩阵
+     */
+    updatePerspectiveMatrix() {
+        this.initPerspectiveMatrix()
     }
 
     getPerspectiveMatrix() {

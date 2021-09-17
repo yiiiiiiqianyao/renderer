@@ -81,3 +81,11 @@ export function setMatrixRotate(modelMatrix, angle, x, y, z) {
 
     mat4.set(modelMatrix, ...e)
 }
+
+export function calMeshModelMatrix(mesh) {
+
+}
+
+export function calMeshWorldModelMatrix(mesh) {
+    
+}
