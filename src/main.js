@@ -56,7 +56,11 @@ export function init(gl) {
         // plane.setRotationY(r)           // 通过设置网格角度来更新旋转角度
         plane.rotate([0, 0.02, 0])         // 通过旋转网格来更新旋转角度
 
-        scene.rotate([0, -0.01, 0])
+        // scene.rotate([0, -0.01, 0])
+        // plane.setTranslete([-Math.sin(r)/2, 0, -Math.cos(r)/2])
+
+        scene.setTranslete([Math.sin(r), 0, Math.cos(r)])
+        scene.updateModelMatrix()
 
         scene.renderScene()
         requestAnimationFrame(animate)

@@ -27,15 +27,15 @@ export default class Scene {
      }
 
     setModelMatrixs() {
-        this.setTransleteMatrix()
+        this.setTranslete(this.position)
         this.setRotateMatrix()
         this.setScaleMatrix()
     }
 
     // 设置平移
-    setTransleteMatrix() {
+    setTranslete(position) {
         this.translateMatrix = mat4.create()
-        mat4.translate(this.translateMatrix, this.translateMatrix, this.position)
+        mat4.translate(this.translateMatrix, this.translateMatrix, position)
     }
 
     setRotateMatrix() {
@@ -62,7 +62,7 @@ export default class Scene {
                 this.translateMatrix, 
                 this.rotateMatrix))
         let parentMatrix = this?.parent?.modelMatrix || mat4.create()
-        mat4.multiply(this.modelMatrix, this.modelMatrix, parentMatrix)
+        mat4.multiply(this.modelMatrix, parentMatrix, this.modelMatrix)
         this.childrens.map(child => child.updateModelMatrix())
     }
 
