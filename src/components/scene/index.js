@@ -63,6 +63,8 @@ export default class Scene {
                 this.rotateMatrix))
         let parentMatrix = this?.parent?.modelMatrix || mat4.create()
         mat4.multiply(this.modelMatrix, parentMatrix, this.modelMatrix)
+
+        // 更新子节点的矩阵
         this.childrens.map(child => child.updateModelMatrix())
     }
 
@@ -95,6 +97,7 @@ export default class Scene {
     } 
 
     renderScene() {
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT)
         this.childrens.map(mesh => mesh.draw())
     }
 }
