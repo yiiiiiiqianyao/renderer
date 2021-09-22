@@ -94,6 +94,8 @@ export default class Plane {
                 this.translateMatrix, 
                 this.rotateMatrix))
         let parentMatrix = this.parent.modelMatrix || mat4.create()
+
+        // 更新矩阵
         mat4.multiply(this.modelMatrix, parentMatrix, this.modelMatrix)
     }
 

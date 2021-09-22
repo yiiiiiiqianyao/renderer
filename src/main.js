@@ -16,17 +16,18 @@ export function init(gl) {
     // gl.disable(gl.CULL_FACE) // 关闭背面剔除
 
     let scene = new Scene({
-        gl
+        gl,
+        position: [1, 0, 0],
     })
 
     let camera = new Camera({
-        position: [2, 2, 2]
+        position: [4, 4, 4]
     })
 
     let plane = new Plane({ 
         gl, 
         camera,
-        position: [0, 0, 0],
+        position: [2, 0, 0],
         rotation: [0, 0.3, 0],
         // angle: [0, 90, 0]
     })
@@ -44,8 +45,13 @@ export function init(gl) {
     })
 
     scene.addChildren(plane)
-    scene.addChildren(plane2)
-    scene.addChildren(plane3)
+    // scene.addChildren(plane2)
+    // scene.addChildren(plane3)
+
+    // scene.renderScene()
+
+    // scene.rotate([0, 0.02, 0])
+    // scene.updateModelMatrix()
 
     scene.renderScene()
 
@@ -54,13 +60,14 @@ export function init(gl) {
     function animate() {
         r += 0.01
         // plane.setRotationY(r)           // 通过设置网格角度来更新旋转角度
-        plane.rotate([0, 0.02, 0])         // 通过旋转网格来更新旋转角度
+        // plane.rotate([0, 0.02, 0])         // 通过旋转网格来更新旋转角度
 
         // scene.rotate([0, -0.01, 0])
         // plane.setTranslete([-Math.sin(r)/2, 0, -Math.cos(r)/2])
 
-        scene.setTranslete([Math.sin(r), 0, Math.cos(r)])
-        scene.updateModelMatrix()
+        // scene.setTranslete([Math.sin(r), 0, Math.cos(r)])
+        scene.rotate([0, 0.02, 0])
+        // scene.updateModelMatrix()
 
         scene.renderScene()
         requestAnimationFrame(animate)
