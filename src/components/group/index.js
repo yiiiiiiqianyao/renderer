@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix'
-
+import { setMatrixRotate } from '../../utils/math'
 export default class Group {
     constructor(props) {
         this.gl = props.gl
@@ -7,22 +7,34 @@ export default class Group {
         this.rotation = props?.rotation || [0, 0, 0]
         this.scale = props?.scale || [1, 1, 1]
         
+        // 存储子对象
         this.childrens = []
 
-        this.setModelMatrixs()
+        this.setMeshMatrixs()
+        this.modelMatrix = this.initModelMatrix()
     }
 
-    setModelMatrixs() {
+    /**
+     * 设置网格的矩阵
+     */
+    setMeshMatrixs() {
         this.setTranslete(this.position)
         this.setRotateMatrix()
         this.setScaleMatrix()
     }
 
+    /**
+     * 设置移动
+     * @param {*} position 
+     */
     setTranslete(position) {
         this.translateMatrix = mat4.create()
         mat4.translate(this.translateMatrix, this.translateMatrix, position)
     }
 
+    /**
+     * 设置旋转矩阵
+     */
     setRotateMatrix() {
         this.rotateMatrix = mat4.create()
 
@@ -31,7 +43,90 @@ export default class Group {
         setMatrixRotate(this.rotateMatrix, this.rotation[2], 0, 0, 1)
     }
 
+    /**
+     * 设置缩放矩阵
+     */
     setScaleMatrix() {
         this.scaleMatrix = mat4.create()
     }
+
+    /**
+     * 初始化模型矩阵
+     * @returns 
+     */
+    initModelMatrix() {
+        return mat4.multiply(
+             mat4.create(),
+             this.scaleMatrix, 
+             mat4.multiply(
+                     mat4.create(),
+                     this.translateMatrix, 
+                     this.rotateMatrix)
+             )
+     }
+
+    /**
+     * 更新模型网格本身的模型矩阵、同时应用父级的模型矩阵
+     */
+    updateModelMatrix() {
+        mat4.multiply(
+            this.modelMatrix, 
+            this.scaleMatrix, 
+            mat4.multiply(
+                mat4.create(), 
+                this.translateMatrix, 
+                this.rotateMatrix))
+        let parentMatrix = this?.parent?.modelMatrix || mat4.create()
+        mat4.multiply(this.modelMatrix, parentMatrix, this.modelMatrix)
+
+        // 更新子节点的矩阵
+        this.childrens.map(child => child.updateModelMatrix())
+    }
+
+    /**
+     * 设置网格绕轴旋转
+     * @param {*} rotateValues 
+     */
+    rotate(rotateValues) {
+        // 更新网格本身记录的旋转角度
+        this.rotation[0] += rotateValues[0]
+        this.rotation[1] += rotateValues[1]
+        this.rotation[2] += rotateValues[2]
+
+        // 更新旋转矩阵
+        mat4.rotateX(this.rotateMatrix, this.rotateMatrix, rotateValues[0])
+        mat4.rotateY(this.rotateMatrix, this.rotateMatrix, rotateValues[1])
+        mat4.rotateZ(this.rotateMatrix, this.rotateMatrix, rotateValues[2])
+
+        // 更新模型矩阵
+        this.updateModelMatrix()
+    }
+
+    /**
+     * 增加子对象
+     * @param {*} mesh 
+     */
+    add(mesh) {
+        if(mesh.parent !== undefined) {
+            
+        }
+        mesh.setParent(this)
+        this.childrens.push(mesh)
+    }
+
+    /**
+     * 设置 parent 节点
+     * @param {*} parent 
+     */
+    setParent(parent) {
+        this.parent = parent
+    }
+
+    /**
+     * 移除子对象
+     * @param {*} meshId 
+     */
+    remove(meshId) {
+        // this.childrens.
+    } 
 }

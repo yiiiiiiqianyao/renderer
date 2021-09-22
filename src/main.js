@@ -44,14 +44,10 @@ export function init(gl) {
         position: [0.3, 0, -0.4]
     })
 
-    scene.addChildren(plane)
-    // scene.addChildren(plane2)
-    // scene.addChildren(plane3)
+    scene.add(plane)
+    scene.add(plane2)
+    scene.add(plane3)
 
-    // scene.renderScene()
-
-    // scene.rotate([0, 0.02, 0])
-    // scene.updateModelMatrix()
 
     scene.renderScene()
 
@@ -60,7 +56,7 @@ export function init(gl) {
     function animate() {
         r += 0.01
         // plane.setRotationY(r)           // 通过设置网格角度来更新旋转角度
-        // plane.rotate([0, 0.02, 0])         // 通过旋转网格来更新旋转角度
+        plane.rotate([0, 0.02, 0])         // 通过旋转网格来更新旋转角度
 
         // scene.rotate([0, -0.01, 0])
         // plane.setTranslete([-Math.sin(r)/2, 0, -Math.cos(r)/2])

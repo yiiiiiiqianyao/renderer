@@ -1,20 +1,18 @@
 import { mat4, vec3 } from 'gl-matrix'
-// import { createProgram, bindAttriBuffer, bindUnifrom4fv, setUnifrom4fv } from '../../utils/gl'
 import * as glUtils from '../../utils/gl'
 import { SHADER_PARAMS } from '../../utils/name'
 import { setMatrixRotate } from '../../utils/math'
-export default class Plane {
+import Group from '../group'
+export default class Plane extends Group{
     constructor(props) {
+        super(props)
         this.type = 'PlaneMesh'
-        this.gl = props.gl
+        
         this.camera = props.camera
        
         this.width = 1
         this.height = 0.5
-        this.position = props?.position || [0, 0, 0]
-        this.rotation = props?.rotation || [0, 0, 0]
-        this.scale = props?.scale || [1, 1, 1]
-        // this.angle = props?.angle || [0, 0, 0]
+       
 
         this.shaderUnifroms = []
 
@@ -47,89 +45,9 @@ export default class Plane {
         let { attr: a_TextCoordLocation } = glUtils.bindAttriBuffer(this.gl, 'a_TextCoord', rectUvs, 2, this.program)
     }
 
-    setModelMatrixs() {
-        this.setTranslete(this.position)
-        this.setRotateMatrix()
-        this.setScaleMatrix()
-    }
-
-    // 设置平移
-    setTranslete(position) {
-        this.translateMatrix = mat4.create()
-        mat4.translate(this.translateMatrix, this.translateMatrix, position)
-    }
-
-    setRotateMatrix() {
-        this.rotateMatrix = mat4.create()
-
-        setMatrixRotate(this.rotateMatrix, this.rotation[0], 1, 0, 0)
-        setMatrixRotate(this.rotateMatrix, this.rotation[1], 0, 1, 0)
-        setMatrixRotate(this.rotateMatrix, this.rotation[2], 0, 0, 1)
-    }
-
-    setScaleMatrix() {
-        this.scaleMatrix = mat4.create()
-    }
-
-    initModelMatrix() {
-       return mat4.multiply(
-            mat4.create(),
-            this.scaleMatrix, 
-            mat4.multiply(
-                    mat4.create(),
-                    this.translateMatrix, 
-                    this.rotateMatrix)
-            )
-    }
 
     /**
-     * 更新模型网格本身的模型矩阵、同时应用父级的模型矩阵
-     */
-    updateModelMatrix() {
-        mat4.multiply(
-            this.modelMatrix, 
-            this.scaleMatrix, 
-            mat4.multiply(
-                mat4.create(), 
-                this.translateMatrix, 
-                this.rotateMatrix))
-        let parentMatrix = this.parent.modelMatrix || mat4.create()
-
-        // 更新矩阵
-        mat4.multiply(this.modelMatrix, parentMatrix, this.modelMatrix)
-    }
-
-    /**
-     * 设置网格 Y 轴的旋转角度
-     * @param {*} rotateY 
-     */
-    setRotationY(rotateY) {
-        setMatrixRotate(this.rotateMatrix, rotateY, 0, 1, 0)
-        this.rotation[1] = rotateY
-        this.updateModelMatrix()
-    }
-
-    /**
-     * 设置网格绕轴旋转
-     * @param {*} rotateValues 
-     */
-    rotate(rotateValues) {
-        // 更新网格本身记录的旋转角度
-        this.rotation[0] += rotateValues[0]
-        this.rotation[1] += rotateValues[1]
-        this.rotation[2] += rotateValues[2]
-
-        // 更新旋转矩阵
-        mat4.rotateX(this.rotateMatrix, this.rotateMatrix, rotateValues[0])
-        mat4.rotateY(this.rotateMatrix, this.rotateMatrix, rotateValues[1])
-        mat4.rotateZ(this.rotateMatrix, this.rotateMatrix, rotateValues[2])
-
-        // 更新模型矩阵
-        this.updateModelMatrix()
-    }
-
-    /**
-     * 设置矩阵
+     * 设置当前网格的矩阵、同时将矩阵传递给着色器
      */
     setMatrixs() {
         this.projMatrix = this.camera.getPerspectiveMatrix()
@@ -141,7 +59,7 @@ export default class Plane {
         this.addShaderUnifroms(u_viewMatrixLocation, SHADER_PARAMS.UNIFROM, this.viewMatrix)
 
         
-        this.setModelMatrixs()
+        this.setMeshMatrixs()
         this.modelMatrix = this.initModelMatrix()
         let u_modelMatrixLocation = glUtils.bindUnifrom4fv(this.gl, 'u_modelMatrix', this.modelMatrix, this.program)
         this.addShaderUnifroms(u_modelMatrixLocation, SHADER_PARAMS.UNIFROM, this.modelMatrix)
@@ -168,14 +86,10 @@ export default class Plane {
         })
     }
 
-    /**
-     * 设置 parent 节点
-     * @param {*} parent 
-     */
-    setParent(parent) {
-        this.parent = parent
-    }
 
+    /**
+     * 绘制当前的网格对象
+     */
     draw() {
         this.gl.useProgram(this.program)
 
@@ -184,6 +98,10 @@ export default class Plane {
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4)
     }
 
+    /**
+     * 返回顶点着色器代码
+     * @returns 
+     */
     getRectVSHADER(){
         return `
             uniform mat4 u_projMatrix;
@@ -201,6 +119,11 @@ export default class Plane {
             }
         `
     }
+
+    /**
+     * 返回片元着色器代码
+     * @returns 
+     */
     getRectFSHADER(){
         return `
             precision mediump float;
@@ -210,8 +133,4 @@ export default class Plane {
             }
         `
     }
-
-    
-
-
 }
