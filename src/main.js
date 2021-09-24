@@ -2,6 +2,8 @@
 import Scene from './components/scene'
 import Plane from './components/plane'
 import Camera from './utils/camera'
+
+import { generateUUID } from './utils/math'
 // 测试的入口
 
 export function init(gl) {
@@ -29,7 +31,6 @@ export function init(gl) {
         camera,
         position: [2, 0, 0],
         rotation: [0, 0.3, 0],
-        // angle: [0, 90, 0]
     })
 
     let plane2 = new Plane({ 
@@ -47,7 +48,6 @@ export function init(gl) {
     scene.add(plane)
     scene.add(plane2)
     scene.add(plane3)
-
 
     scene.renderScene()
 

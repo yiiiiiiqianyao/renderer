@@ -13,7 +13,7 @@ export default class Plane extends Group{
         this.width = 1
         this.height = 0.5
        
-
+        // 当前对象的 shader 变量参数列表
         this.shaderUnifroms = []
 
         this.init()
