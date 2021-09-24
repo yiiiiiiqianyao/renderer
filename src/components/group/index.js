@@ -1,7 +1,9 @@
 import { mat4 } from 'gl-matrix'
-import { setMatrixRotate } from '../../utils/math'
+import { setMatrixRotate, generateUUID } from '../../utils/math'
 export default class Group {
     constructor(props) {
+        this.uuid = generateUUID()
+
         this.gl = props.gl
         this.position = props?.position || [0, 0, 0]
         this.rotation = props?.rotation || [0, 0, 0]
@@ -107,16 +109,29 @@ export default class Group {
      * @param {*} mesh 
      */
     add(mesh) {
-        if(mesh.parent !== undefined) {
-            
+        // TODO: 判断当前对象的子节点中不存在 mesh
+        if(!this.hasChildren(mesh)) {
+            mesh.parent && mesh.parent.remove(mesh)
+            mesh.setParent(this)
+            this.childrens.push(mesh)
         }
-        mesh.setParent(this)
-        this.childrens.push(mesh)
+    }
+
+    /**
+     * 判断当前对象的子节点中是否存在对象 object
+     * @param {*} object
+     * @returns 
+     */
+    hasChildren(object) {
+        if(object.uuid) {
+            return this.childrens.filter(child => child.uuid === object.uuid).length > 0;
+        }
+        return false;
     }
 
     /**
      * 设置 parent 节点
-     * @param {*} parent 
+     * @param {*} parent | undefined
      */
     setParent(parent) {
         this.parent = parent
@@ -124,9 +139,14 @@ export default class Group {
 
     /**
      * 移除子对象
-     * @param {*} meshId 
+     * @param {*} uuid 
      */
-    remove(meshId) {
-        // this.childrens.
+    remove(uuid) {
+        this.childrens = this.childrens.filter(child => {
+            if(child.uuid === uuid) {
+                child.setParent(undefined)
+            }
+            return child.uuid !== uuid
+        })
     } 
 }
