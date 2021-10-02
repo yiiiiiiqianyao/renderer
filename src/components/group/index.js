@@ -8,6 +8,8 @@ export default class Group {
         this.position = props?.position || [0, 0, 0]
         this.rotation = props?.rotation || [0, 0, 0]
         this.scale = props?.scale || [1, 1, 1]
+
+        
         
         // 存储子对象
         this.childrens = []
@@ -21,7 +23,7 @@ export default class Group {
      */
     setMeshMatrixs() {
         this.setTranslete(this.position)
-        this.setRotateMatrix()
+        this.setRotate()
         this.setScaleMatrix()
     }
 
@@ -32,19 +34,28 @@ export default class Group {
     setTranslete(position) {
         this.translateMatrix = mat4.create()
         mat4.translate(this.translateMatrix, this.translateMatrix, position)
+
+        if(this.rotateMatrix && this.scaleMatrix) {
+            this.updateModelMatrix()
+        }
     }
 
     /**
      * 设置旋转矩阵
      */
-    setRotateMatrix() {
-       
+    setRotate(rotation) {
+        if(rotation) {
+            this.rotation = [...rotation]
+        }
         this.rotateMatrix = mat4.create()
 
         mat4.rotate(this.rotateMatrix, this.rotateMatrix, this.rotation[0], vec3.fromValues(1, 0, 0))
         mat4.rotate(this.rotateMatrix, this.rotateMatrix, this.rotation[1], vec3.fromValues(0, 1, 0))
         mat4.rotate(this.rotateMatrix, this.rotateMatrix, this.rotation[2], vec3.fromValues(0, 0, 1))
 
+        if(this.translateMatrix && this.scaleMatrix) {
+            this.updateModelMatrix()
+        }
     }
 
     /**
@@ -52,6 +63,7 @@ export default class Group {
      */
     setScaleMatrix() {
         this.scaleMatrix = mat4.create()
+
     }
 
     /**
