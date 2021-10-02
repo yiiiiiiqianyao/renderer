@@ -6,6 +6,10 @@ import Camera from './utils/camera'
 import BasicMaterial from './components/material/BasicMaterial'
 import Img from './assets/pkq.png'
 import Img2 from './assets/i.jpg'
+import Img3 from './assets/baidu.png'
+import Img4 from './assets/img1.jpg'
+// 目前需要只支持图片大小为 2 的倍数
+
 
 // 测试的入口
 
@@ -24,7 +28,6 @@ export function init(gl) {
     gl.enable(gl.CULL_FACE) // 开启背面剔除
     gl.disable(gl.CULL_FACE) // 关闭背面剔除
 
-    console.log(Img)
     let mat1 = new BasicMaterial({
         gl,
         color: 'blue',
@@ -34,7 +37,7 @@ export function init(gl) {
     let mat2 = new BasicMaterial({
         gl,
         color: 'blue',
-        map: Img2
+        map: Img4
     })
 
     let scene = new Scene({

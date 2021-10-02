@@ -117,3 +117,15 @@ export const generateUUID =  (function () {
     };
 
 } )()
+
+export function isPowerOfTwo ( value ) {
+
+  return ( value & ( value - 1 ) ) === 0 && value !== 0;
+
+}
+
+export function floorPowerOfTwo ( value ) {
+
+  return Math.pow( 2, Math.floor( Math.log( value ) / Math.LN2 ) );
+
+}

@@ -1,5 +1,6 @@
 import Material from "./Material"
 import Color from "../object/Color"
+import { loadImage } from '../../utils/texture'
 
 export default class BasicMaterial extends Material{
     constructor(props) {
@@ -14,7 +15,7 @@ export default class BasicMaterial extends Material{
     async init() {
         if(this.map) {
             
-            let { succeed, img } = await this.loadImage()
+            let { succeed, img } = await loadImage(this.map)
             if(succeed) {
                 this.image = img
                 this.initTexture()
@@ -35,27 +36,6 @@ export default class BasicMaterial extends Material{
         this.emit('loadImage', {
             texture: this.texture,
             img: this.image
-        })
-    }
-
-    loadImage() {
-        return new Promise((resolve, reject) => {
-            let img = new Image()
-            img.src = this.map
-            img.crossOrigin = 'none'
-            img.onload = () => {
-                resolve({
-                    succeed: true,
-                    img
-                })
-                
-            }
-            img.onerror = (err) => {
-                reject({
-                    succeed: false,
-                    img
-                })
-            }
         })
     }
 
