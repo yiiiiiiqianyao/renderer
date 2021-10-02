@@ -1,10 +1,10 @@
 import * as glUtils from '../../utils/gl'
 import { SHADER_PARAMS } from '../../utils/name'
 import Group from '../group'
-export default class Plane extends Group{
+export default class Cube extends Group{
     constructor(props) {
         super(props)
-        this.type = 'PlaneMesh'
+        this.type = 'CubeMesh'
 
         this.firstLoad = true
         
@@ -13,8 +13,6 @@ export default class Plane extends Group{
        
         this.width = 1
         this.height = 0.5
-
-        this.imgLoading = false
        
         // 当前对象的 shader 变量参数列表
         this.shaderUnifroms = []
@@ -46,6 +44,7 @@ export default class Plane extends Group{
         let { attr: a_PositionLocation } = glUtils.bindAttriBuffer(this.gl, 'a_Position', rectVertices, 2, this.program)
         let { attr: a_TextCoordLocation } = glUtils.bindAttriBuffer(this.gl, 'a_TextCoord', rectUvs, 2, this.program)
 
+        this.draw()
     }
 
     /**
@@ -100,19 +99,12 @@ export default class Plane extends Group{
      * 绘制当前的网格对象
      */
     draw() {
-
-        if(this.imgLoading) return
-        
+     
         this.gl.useProgram(this.program)
 
-        // this.gl.clearColor(0.0, 0.0, 0.0, 1.0)
-        // this.gl.clear(this.gl.COLOR_BUFFER_BIT)
-        
         this.updateShaderUnifroms()
 
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4)
-
-        
     }
 
     /**
@@ -146,28 +138,20 @@ export default class Plane extends Group{
         let gl_FragColorLine = 'gl_FragColor = vec4(v_uv, 1.0, 1.0);\n'
         let unifromLines = []
         if(this?.material?.map) {
-            this.imgLoading = true
 
             this.material?.on('loadImage', ({texture, img}) => {
-                
                 this.gl.useProgram(this.program)
 
                 // TODO: cache texture
                 this.texture = texture
-        
+           
                 this.gl.activeTexture(this.gl.TEXTURE0); // 激活0号纹理单元
                 this.material.texture && this.gl.bindTexture(this.gl.TEXTURE_2D, texture); // 绑定纹理单元
     
                 var u_Sampler = this.gl.getUniformLocation(this.program, 'u_Sampler');
                 this.gl.uniform1i(u_Sampler, 0);
-
-                this.imgLoading = false
-             
-                // setTimeout(() => {
-                //     this.scene && this.scene.renderScene()
-                // }, 300)
-                this.scene && this.scene.renderScene()
-                
+    
+                this.draw()
             })
             gl_FragColorLine = 'gl_FragColor = texture2D(u_Sampler, v_uv);\n'
         }
@@ -187,4 +171,3 @@ export default class Plane extends Group{
 
     }
 }
-

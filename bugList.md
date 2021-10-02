@@ -1,28 +1,22 @@
+- 当加载贴图纹理的时候，不打开 animate 重复渲染，在单次渲染的时候会出现渲染错误，但是在 scene 的 renderScene 当法中取消 this.gl.clear(this.gl.COLOR_BUFFER_BIT) 就不会有问题 ？？？
+
+javascript```
+<!-- main.js -->
 
 import Scene from './components/scene'
 import Plane from './components/plane'
 import Camera from './utils/camera'
-
 import BasicMaterial from './components/material/BasicMaterial'
 import Img from './assets/pkq.png'
 import Img2 from './assets/i.jpg'
 import Img3 from './assets/baidu.png'
 import Img4 from './assets/img1.jpg'
-// 目前需要只支持图片大小为 2 的倍数
-
-
-// 测试的入口
 
 export function init(gl) {
- 
-    // gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clearColor(1.0, 0.0, 0.0, 0.5)
     gl.clear(gl.COLOR_BUFFER_BIT)
-
     gl.enable(gl.DEPTH_TEST)        // 开启深度检测
     gl.clear(gl.DEPTH_BUFFER_BIT)   // 清除深度缓存
-
-
     gl.enable(gl.BLEND) // 开启混合
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA) // 指定混合函数
 
@@ -72,34 +66,10 @@ export function init(gl) {
         rotation: [Math.PI/2, 0, 0]
     })
 
-    
-
     scene.add(plane)
     scene.add(plane2)
     scene.add(plane3)
 
-    // scene.renderScene()
-    // scene.setTranslete([1, 0, 0])
-
-    let r = 0
-    animate()
-    function animate() {
-        r += 0.01
-        plane && plane.setRotate([0, r, 0])           // 通过设置网格角度来更新旋转角度
-        plane2 && plane2.setRotate([r, 0, 0])           // 通过设置网格角度来更新旋转角度
-        // plane && plane.rotate([0, 0.02, 0])         // 通过旋转网格来更新旋转角度
-
-        // scene.rotate([0, -0.01, 0])
-        // plane && plane.setTranslete([-Math.sin(r)/2, 0, -Math.cos(r)/2])
-
-        scene.setTranslete([Math.sin(r) * 1, 0, Math.cos(r) * 1])
-
-        scene.renderScene()
-
-        
-        requestAnimationFrame(animate)
-    }
 }
 
-
-
+```
