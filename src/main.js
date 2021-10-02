@@ -67,8 +67,11 @@ export function init(gl) {
     let plane3 = new Plane({ 
         gl, 
         camera,
-        position: [0.3, 0, -0.4]
+        position: [0.3, 0, -0.4],
+        rotation: [Math.PI/2, 0, 0]
     })
+
+    // plane3.setRotateMatrix()
 
     scene.add(plane)
     scene.add(plane2)
