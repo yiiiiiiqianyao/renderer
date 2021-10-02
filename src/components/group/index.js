@@ -1,5 +1,5 @@
-import { mat4 } from 'gl-matrix'
-import { setMatrixRotate, generateUUID } from '../../utils/math'
+import { mat4, vec3 } from 'gl-matrix'
+import { generateUUID } from '../../utils/math'
 export default class Group {
     constructor(props) {
         this.uuid = generateUUID()
@@ -38,11 +38,13 @@ export default class Group {
      * 设置旋转矩阵
      */
     setRotateMatrix() {
+       
         this.rotateMatrix = mat4.create()
 
-        setMatrixRotate(this.rotateMatrix, this.rotation[0], 1, 0, 0)
-        setMatrixRotate(this.rotateMatrix, this.rotation[1], 0, 1, 0)
-        setMatrixRotate(this.rotateMatrix, this.rotation[2], 0, 0, 1)
+        mat4.rotate(this.rotateMatrix, this.rotateMatrix, this.rotation[0], vec3.fromValues(1, 0, 0))
+        mat4.rotate(this.rotateMatrix, this.rotateMatrix, this.rotation[1], vec3.fromValues(0, 1, 0))
+        mat4.rotate(this.rotateMatrix, this.rotateMatrix, this.rotation[2], vec3.fromValues(0, 0, 1))
+
     }
 
     /**

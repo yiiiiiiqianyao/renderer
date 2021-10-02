@@ -1,7 +1,5 @@
-import { mat4, vec3 } from 'gl-matrix'
 import * as glUtils from '../../utils/gl'
 import { SHADER_PARAMS } from '../../utils/name'
-import { setMatrixRotate } from '../../utils/math'
 import Group from '../group'
 export default class Plane extends Group{
     constructor(props) {
@@ -62,8 +60,8 @@ export default class Plane extends Group{
         this.addShaderUnifroms(u_viewMatrixLocation, SHADER_PARAMS.UNIFROM, this.viewMatrix)
 
         
-        this.setMeshMatrixs()
-        this.modelMatrix = this.initModelMatrix()
+        // this.setMeshMatrixs()
+        // this.modelMatrix = this.initModelMatrix()
         let u_modelMatrixLocation = glUtils.bindUnifrom4fv(this.gl, 'u_modelMatrix', this.modelMatrix, this.program)
         this.addShaderUnifroms(u_modelMatrixLocation, SHADER_PARAMS.UNIFROM, this.modelMatrix)
     }
