@@ -25,8 +25,7 @@ export default class Scene extends Group{
     }
 
     renderScene() {
-  
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT)
         this.childrens.map(mesh => mesh.draw())
     }
 }
