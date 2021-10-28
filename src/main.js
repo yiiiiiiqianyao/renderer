@@ -10,11 +10,24 @@ import Img3 from './assets/baidu.png'
 import Img4 from './assets/img1.jpg'
 // 目前需要只支持图片大小为 2 的倍数
 
+import GrayPass from './components/pass/gray'
 
+// import { vec3 } from 'gl-matrix'
 // 测试的入口
 
 export function init(gl) {
- 
+
+    // let a = vec3.fromValues(1, 2, 3)
+    // let b = vec3.fromValues(3, 7, 4)
+    // let c = vec3.fromValues(5, 8, 9)
+    // let ab = vec3.sub(vec3.create(), b, a)
+    
+    // let ac = vec3.sub(vec3.create(), c, a)
+    // let abDotac = vec3.dot(ab, ac)
+    // let abCrossac = vec3.cross(vec3.create(), ab, ac)
+
+    // console.log(abDotac, abCrossac)
+
     // gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clearColor(1.0, 0.0, 0.0, 0.5)
     gl.clear(gl.COLOR_BUFFER_BIT)
@@ -72,14 +85,16 @@ export function init(gl) {
         rotation: [Math.PI/2, 0, 0]
     })
 
-    
-
     scene.add(plane)
     scene.add(plane2)
     scene.add(plane3)
 
-    // scene.renderScene()
+    scene.renderScene()
     // scene.setTranslete([1, 0, 0])
+
+    // add test pass - webgl1
+    const grayPass = new GrayPass({gl})
+    scene.addPass(grayPass)
 
     let r = 0
     animate()
