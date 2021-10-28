@@ -18,6 +18,7 @@ export default class Plane extends Group{
        
         // 当前对象的 shader 变量参数列表
         this.shaderUnifroms = []
+        this.shaderAttributes = []
 
         this.init()
     }
@@ -43,9 +44,11 @@ export default class Plane extends Group{
 
         this.setMatrixs()
 
-        let { attr: a_PositionLocation } = glUtils.bindAttriBuffer(this.gl, 'a_Position', rectVertices, 2, this.program)
-        let { attr: a_TextCoordLocation } = glUtils.bindAttriBuffer(this.gl, 'a_TextCoord', rectUvs, 2, this.program)
+        
+        this.shaderAttributes.push(glUtils.bindAttriBuffer(this.gl, 'a_Position', rectVertices, 2, this.program))
+        this.shaderAttributes.push(glUtils.bindAttriBuffer(this.gl, 'a_TextCoord', rectUvs, 2, this.program))
 
+        // this.gl.useProgram(null)
     }
 
     /**
@@ -71,8 +74,16 @@ export default class Plane extends Group{
      * 更新 shader 的 uniform 变量的值
      */
     updateShaderUnifroms() {
+        // reSetUnifrom
         this.shaderUnifroms.map(({location, currentDataLocation}) => {
             glUtils.setUnifrom4fv(this.gl, location, currentDataLocation)
+        })
+
+        // reBindBuffer
+        this.shaderAttributes.map(({buffer, attr, count}) => {
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer) // 将缓冲区对象绑定到目标
+            this.gl.vertexAttribPointer(attr, count, this.gl.FLOAT, false, 0, 0);
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
         })
 
         // TODO: 每次渲染的时候重新为纹理分配纹理空间
@@ -104,11 +115,10 @@ export default class Plane extends Group{
         if(this.imgLoading) return
         
         this.gl.useProgram(this.program)
-
-        // this.gl.clearColor(0.0, 0.0, 0.0, 1.0)
-        // this.gl.clear(this.gl.COLOR_BUFFER_BIT)
         
+        // update unifrom
         this.updateShaderUnifroms()
+        // reBind attribute
 
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4)
 

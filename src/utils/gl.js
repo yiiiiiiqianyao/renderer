@@ -1,16 +1,4 @@
 
-export function initShaders(gl, vshader, fshader) {
-    var program = createProgram(gl, vshader, fshader); // 根据说着色器代码构建程序对象
-    if (!program) {
-      console.log('Failed to create program');
-      return false;
-    }
-  
-    gl.useProgram(program); // 上下文对象绑定程序对象 
-    gl.program = program; // 绑定程序对象的引用
-  
-    return true;
-  }
 
 export function createProgram(gl, vshader, fshader) {
     // Create shader object
@@ -84,7 +72,8 @@ export function bindAttriBuffer(gl, attrName, vertices, count, program) {
     let attr = gl.getAttribLocation(program, attrName);
     gl.vertexAttribPointer(attr, count, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(attr);
-    return { buffer, attr }
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    return { buffer, attr, count }
 }
 
 export function bindUnifrom4fv(gl, unifromName, data, program) {
@@ -98,4 +87,30 @@ export function bindUnifrom4fv(gl, unifromName, data, program) {
 
 export function setUnifrom4fv(gl, location, data) {
   gl.uniformMatrix4fv(location, false, data);
+}
+
+export function initFramebuffer(gl) {
+  const { drawingBufferWidth: OFFER_SCREEN_WIDTH, drawingBufferHeight: OFFER_SCREEN_HEIGHT } = gl
+  const FRAMEBUFFER = gl.createFramebuffer()
+  gl.bindFramebuffer(gl.FRAMEBUFFER, FRAMEBUFFER);
+  var depthbuffer = gl.createRenderbuffer();
+  gl.bindRenderbuffer(gl.RENDERBUFFER, depthbuffer);
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, OFFER_SCREEN_WIDTH, OFFER_SCREEN_HEIGHT);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthbuffer);
+
+  const texture = gl.createTexture();
+  FRAMEBUFFER.texture = texture
+  FRAMEBUFFER.width = OFFER_SCREEN_WIDTH
+  FRAMEBUFFER.height = OFFER_SCREEN_HEIGHT
+
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, OFFER_SCREEN_WIDTH, OFFER_SCREEN_HEIGHT, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+  gl.bindTexture(gl.TEXTURE_2D, null);
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  return FRAMEBUFFER;
 }
