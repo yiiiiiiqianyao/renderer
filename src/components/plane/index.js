@@ -11,8 +11,8 @@ export default class Plane extends Group{
         this.camera = props?.camera
         this.material = props?.material
        
-        this.width = 1
-        this.height = 0.5
+        this.width = props.width || 1
+        this.height = props.height || 0.5
 
         this.imgLoading = false
        
