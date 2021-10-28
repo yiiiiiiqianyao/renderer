@@ -66,6 +66,8 @@ export function init(gl) {
     let plane = new Plane({ 
         gl, 
         camera,
+        width: 1,
+        height: 1,
         position: [2, 0, 0],
         rotation: [0, 0.3, 0],
         material: mat1
@@ -74,6 +76,8 @@ export function init(gl) {
     let plane2 = new Plane({ 
         gl, 
         camera,
+        width: 0.5,
+        height: 0.5,
         position: [0.3, 0, 0.4],
         material: mat2
     })
