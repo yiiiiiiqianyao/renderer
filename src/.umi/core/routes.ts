@@ -57,7 +57,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/index.md",
-          "updatedTime": 1635869086811,
+          "updatedTime": 1635869128000,
           "title": "API",
           "order": 4,
           "slugs": [
@@ -141,7 +141,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/base.zh.md",
-          "updatedTime": 1635869086809,
+          "updatedTime": 1635869128000,
           "title": "simple demo",
           "order": 1,
           "slugs": [

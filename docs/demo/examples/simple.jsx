@@ -3,7 +3,6 @@ import { initGL } from 'renderer';
 
 export default () => {
   React.useEffect(() => {
-    console.log(initGL);
     initGL('wrap');
   }, []);
 
