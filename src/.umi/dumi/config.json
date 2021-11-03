@@ -1,0 +1,44 @@
+{
+  "menus": {
+    "en-US": {
+      "*": [
+        {
+          "path": "/",
+          "title": "API",
+          "meta": {
+            "order": 4
+          }
+        },
+        {
+          "title": "Demo",
+          "path": "/demo",
+          "meta": {},
+          "children": [
+            {
+              "path": "/demo/base",
+              "title": "simple demo",
+              "meta": {
+                "order": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "locales": [
+    {
+      "name": "en-US",
+      "label": "English"
+    }
+  ],
+  "navs": {},
+  "title": "renderer",
+  "logo": "https://user-images.githubusercontent.com/9554297/83762004-a0761b00-a6a9-11ea-83b4-9c8ff721d4b8.png",
+  "mode": "doc",
+  "repository": {
+    "url": "",
+    "branch": "master"
+  },
+  "theme": {}
+}
