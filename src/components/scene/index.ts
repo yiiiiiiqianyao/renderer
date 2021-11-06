@@ -1,11 +1,21 @@
 // @ts-nocheck
+import { ICamera } from '../../utils/camera';
+import { IPass } from '../pass/gray';
 import Group from '../group';
 // 场景类 主要是管理场景中所有的网格
+
+interface ISceneProps {}
 export default class Scene extends Group {
+  private type: string = 'Scene';
+  private gl: WebGLRenderingContext;
+  public camera: ICamera;
+  private passList: IPass[];
   constructor(props) {
     super(props);
-    this.type = 'Scene';
-    this.gl = props.gl;
+
+    this.renderer = props.renderer;
+    this.gl = this.renderer.gl;
+    this.camera = props.camera;
 
     // pass manager - for now
     this.passList = [];
@@ -16,6 +26,8 @@ export default class Scene extends Group {
    * @param {*} mesh
    */
   add(mesh) {
+    mesh.init(this.gl, this.camera);
+
     // TODO: 判断当前对象的子节点中不存在 mesh
     if (!this.hasChildren(mesh)) {
       mesh.parent && mesh.parent.remove(mesh);
@@ -27,11 +39,18 @@ export default class Scene extends Group {
     }
   }
 
+  setCamera(camera: ICamera) {
+    this.camera = camera;
+  }
+
+  setRenderer() {}
+
   /**
    * 增加后处理 pass
    * @param {*} pass
    */
-  addPass(pass) {
+  addPass(pass: IPass) {
+    pass.init(this.gl);
     this.passList.push(pass);
   }
 
@@ -43,7 +62,7 @@ export default class Scene extends Group {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         if (i === 0) {
           // 将场景内容绘制到 pass framebuffer
-          this.childrens.map(mesh => mesh.draw());
+          this.childrens.map(mesh => mesh.draw(this.camera));
         } else {
           // 将场景内容会到链接的 pass framebuffer
           // Tip: 还未完善
@@ -55,7 +74,7 @@ export default class Scene extends Group {
       }
     } else {
       this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-      this.childrens.map(mesh => mesh.draw());
+      this.childrens.map(mesh => mesh.draw(this.camera));
     }
   }
 }

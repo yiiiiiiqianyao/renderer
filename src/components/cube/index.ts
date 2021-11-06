@@ -3,11 +3,9 @@ import * as glUtils from '../../utils/gl';
 import { SHADER_PARAMS } from '../../utils/name';
 import Group from '../group';
 export default class Cube extends Group {
+  public type: string = 'CubeMesh';
   constructor(props) {
     super(props);
-    this.type = 'CubeMesh';
-
-    this.firstLoad = true;
 
     this.camera = props?.camera;
     this.material = props?.material;

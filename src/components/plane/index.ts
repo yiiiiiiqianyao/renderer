@@ -1,15 +1,16 @@
 // @ts-nocheck
+import { ICamera } from '@/utils/camera';
 import * as glUtils from '../../utils/gl';
 import { SHADER_PARAMS } from '../../utils/name';
 import Group from '../group';
 export default class Plane extends Group {
+  public gl: WebGLRenderingContext;
+  public camera: ICamera;
+
   constructor(props) {
     super(props);
     this.type = 'PlaneMesh';
 
-    this.firstLoad = true;
-
-    this.camera = props?.camera;
     this.material = props?.material;
 
     this.width = props.width || 1;
@@ -20,11 +21,13 @@ export default class Plane extends Group {
     // 当前对象的 shader 变量参数列表
     this.shaderUnifroms = [];
     this.shaderAttributes = [];
-
-    this.init();
   }
 
-  init() {
+  init(gl: WebGLRenderingContext, camera: ICamera) {
+    this.gl = gl;
+    this.camera = camera;
+    this.material?.init(this.gl);
+
     this.program = glUtils.createProgram(
       this.gl,
       this.getRectVSHADER(),
@@ -72,7 +75,14 @@ export default class Plane extends Group {
       glUtils.bindAttriBuffer(this.gl, 'a_TextCoord', rectUvs, 2, this.program),
     );
 
-    // this.gl.useProgram(null)
+    this.gl.useProgram(null);
+  }
+
+  /**
+   * @param camera
+   */
+  setCamera(camera: ICamera) {
+    this.camera = camera;
   }
 
   /**
@@ -105,8 +115,6 @@ export default class Plane extends Group {
       this.viewMatrix,
     );
 
-    // this.setMeshMatrixs()
-    // this.modelMatrix = this.initModelMatrix()
     let u_modelMatrixLocation = glUtils.bindUnifrom4fv(
       this.gl,
       'u_modelMatrix',
@@ -136,6 +144,9 @@ export default class Plane extends Group {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
     });
 
+    // reBindMatrix
+    this.setMatrixs();
+
     // TODO: 每次渲染的时候重新为纹理分配纹理空间
     if (this.texture) {
       this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
@@ -161,14 +172,18 @@ export default class Plane extends Group {
   /**
    * 绘制当前的网格对象
    */
-  draw() {
-    if (this.imgLoading) return;
+  draw(camera: ICamera) {
+    // TODO: 在纹理加载过程中或相机不存在时不渲染
+    if (this.imgLoading || !camera) return;
 
+    // TODO:  切换程序对象
     this.gl.useProgram(this.program);
+
+    // TODO: reset camera
+    this.setCamera(camera);
 
     // update unifrom
     this.updateShaderUnifroms();
-    // reBind attribute
 
     this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
   }

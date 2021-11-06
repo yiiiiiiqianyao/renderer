@@ -1,11 +1,15 @@
 //@ts-nocheck
 import { mat4 } from 'gl-matrix';
 import { ViewPort } from './viewport';
+
+export interface ICamera {}
 // 简单的相机
-export default class Camera {
+export default class Camera implements ICamera {
+  public aspect: number;
   constructor(props) {
     this.fov = props?.fov || 40;
     this.aspect = props?.aspect || 1;
+    // this.aspect =  1;
     this.near = props?.near || 0.01;
     this.far = props?.far || 100;
 
@@ -35,6 +39,12 @@ export default class Camera {
       this.near,
       this.far,
     );
+  }
+
+  resize(width: number, height: number) {
+    this.aspect = width / height;
+    // console.log('this.aspect', this.aspect)
+    this.updatePerspectiveMatrix();
   }
 
   /**
