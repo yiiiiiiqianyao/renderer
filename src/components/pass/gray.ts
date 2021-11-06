@@ -1,12 +1,19 @@
 // @ts-nocheck
 import * as glUtils from '../../utils/gl';
 
-export default class GrayPass {
+export interface IPass {
+  init(gl: WebGLRenderingContext): void;
+  drawPass(): void;
+}
+
+export default class GrayPass implements IPass {
+  private gl: WebGLRenderingContext;
   constructor(props) {
-    this.gl = props.gl;
-
     this.shaderAttributes = [];
+  }
 
+  init(gl: WebGLRenderingContext) {
+    this.gl = gl;
     const {
       FRAMEBUFFER,
       OFFER_SCREEN_WIDTH,

@@ -6,16 +6,14 @@ import { loadImage } from '../../utils/texture';
 export default class BasicMaterial extends Material {
   constructor(props) {
     super(props);
-    this.gl = props.gl;
     this.color = Color.isColor(props?.color)
       ? props?.color
       : new Color(props?.color);
     this.map = props?.map || undefined;
-
-    this.init();
   }
 
-  async init() {
+  async init(gl: WebGLRenderingContext) {
+    this.gl = gl;
     if (this.map) {
       let { succeed, img } = await loadImage(this.map);
       if (succeed) {
