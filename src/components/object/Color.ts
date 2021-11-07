@@ -6,6 +6,7 @@ export interface IColor {
   r: number;
   g: number;
   b: number;
+  a: number;
 
   handleStringColor(str: string): void;
   handle16Color(): void;
@@ -20,9 +21,14 @@ export default class Color implements IColor {
   public b: number = 1;
   public a: number = 1;
 
-  constructor(props: string | undefined | IColor) {
+  constructor(props: string | undefined | IColor | number[]) {
     if (typeof props === 'string') {
       this.handleStringColor(props);
+    } else if (props instanceof Array) {
+      this.r = props[0];
+      this.g = props[1];
+      this.b = props[2];
+      this.a = props[3];
     } else if (Color.isColor(props)) {
       this.r = props.r;
       this.g = props.g;

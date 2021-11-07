@@ -7,6 +7,7 @@ export default () => {
   React.useEffect(() => {
     let renderer = new SR.Renderer({
       wrap: 'wrap',
+      clearColor: new SR.Color([1, 0, 0, 1]),
     });
 
     let mat1 = new SR.BasicMaterial({

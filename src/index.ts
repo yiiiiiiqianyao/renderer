@@ -4,7 +4,8 @@ import Camera from './utils/camera';
 import Renderer from './components/renderer';
 
 import BasicMaterial from './components/material/BasicMaterial';
+import Color from './components/object/Color';
 
 import GrayPass from './components/pass/gray';
 
-export { Scene, Plane, Camera, Renderer, BasicMaterial, GrayPass };
+export { Scene, Plane, Camera, Renderer, BasicMaterial, Color, GrayPass };

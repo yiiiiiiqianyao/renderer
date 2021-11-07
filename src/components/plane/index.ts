@@ -257,6 +257,7 @@ export default class Plane extends Group {
       varying vec2 v_uv;
       void main(){
         ${gl_FragColorLine}
+        gl_FragColor.a *= u_opacity;
       }
       `;
     return shader;

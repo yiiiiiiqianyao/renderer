@@ -1,3 +1,4 @@
+import Color, { IColor } from '../object/Color';
 import { getCanvas, setCanvas } from '../utils/dom';
 
 interface IRender {
@@ -10,16 +11,20 @@ interface IRender {
 
 interface IRenderProps {
   wrap: string | HTMLElement | HTMLCanvasElement;
+  clearColor: any;
 }
 
 export default class Renderer implements IRender {
   public gl: WebGLRenderingContext;
   public wrap: HTMLElement;
+  public clearColor: IColor;
   public canvas: HTMLCanvasElement;
   public renderPixelWidth: number;
   public renderPixelHeight: number;
 
   constructor(props: IRenderProps) {
+    this.clearColor = new Color(props.clearColor);
+
     this.initRenderContext(props.wrap);
     this.renderPixelSize();
   }
@@ -45,7 +50,8 @@ export default class Renderer implements IRender {
   }
 
   initGLParams(gl: WebGLRenderingContext) {
-    gl.clearColor(1.0, 0.0, 0.0, 0.5);
+    let c = this.clearColor.getRGBA();
+    gl.clearColor(c[0], c[1], c[2], c[3]);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.enable(gl.DEPTH_TEST); // 开启深度检测

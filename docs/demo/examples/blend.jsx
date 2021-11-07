@@ -7,22 +7,23 @@ export default () => {
   React.useEffect(() => {
     let renderer = new SR.Renderer({
       wrap: 'wrap',
+      clearColor: new SR.Color([0, 0, 0, 1]),
     });
 
     let mat1 = new SR.BasicMaterial({
-      color: 'blue',
-      map: Img,
+      color: 'green',
+      transparent: true,
+      opacity: 0.6,
     });
 
     let mat2 = new SR.BasicMaterial({
-      color: 'blue',
-      map: Img4,
+      transparent: true,
+      opacity: 0.6,
     });
 
     let mat3 = new SR.BasicMaterial({
       color: 'blue',
-      transparent: true,
-      opacity: 0.5,
+      opacity: 0.6,
     });
 
     let camera = new SR.Camera({
@@ -59,17 +60,9 @@ export default () => {
       material: mat3,
     });
 
-    let plane4 = new SR.Plane({
-      width: 0.5,
-      height: 0.5,
-      position: [0, 0, 3],
-      rotation: [0, 0, 0],
-    });
-
     scene.add(plane);
-    scene.add(plane2);
     scene.add(plane3);
-    scene.add(plane4);
+    scene.add(plane2);
 
     scene.renderScene();
 
