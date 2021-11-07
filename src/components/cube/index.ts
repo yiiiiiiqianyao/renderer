@@ -77,43 +77,29 @@ export default class Cube extends Group {
    */
   setMatrixs() {
     this.projMatrix = this.camera.getPerspectiveMatrix();
-    let u_projMatrixLocaion = glUtils.bindUnifrom4fv(
+    let u_projMatrixLocaion = glUtils.bindUnifrom(
       this.gl,
       'u_projMatrix',
       this.projMatrix,
       this.program,
-    );
-    this.addShaderUnifroms(
-      u_projMatrixLocaion,
-      SHADER_PARAMS.UNIFROM,
-      this.projMatrix,
+      'mat4',
     );
 
     this.viewMatrix = this.camera.getViewMatrix();
-    let u_viewMatrixLocation = glUtils.bindUnifrom4fv(
+    let u_viewMatrixLocation = glUtils.bindUnifrom(
       this.gl,
       'u_viewMatrix',
       this.viewMatrix,
       this.program,
-    );
-    this.addShaderUnifroms(
-      u_viewMatrixLocation,
-      SHADER_PARAMS.UNIFROM,
-      this.viewMatrix,
+      'mat4',
     );
 
-    // this.setMeshMatrixs()
-    // this.modelMatrix = this.initModelMatrix()
-    let u_modelMatrixLocation = glUtils.bindUnifrom4fv(
+    let u_modelMatrixLocation = glUtils.bindUnifrom(
       this.gl,
       'u_modelMatrix',
       this.modelMatrix,
       this.program,
-    );
-    this.addShaderUnifroms(
-      u_modelMatrixLocation,
-      SHADER_PARAMS.UNIFROM,
-      this.modelMatrix,
+      'mat4',
     );
   }
 
@@ -121,9 +107,9 @@ export default class Cube extends Group {
    * 更新 shader 的 uniform 变量的值
    */
   updateShaderUnifroms() {
-    this.shaderUnifroms.map(({ location, currentDataLocation }) => {
-      glUtils.setUnifrom4fv(this.gl, location, currentDataLocation);
-    });
+    // this.shaderUnifroms.map(({ location, currentDataLocation, vec }) => {
+    //   glUtils.setUnifrom(this.gl, location, currentDataLocation, vec);
+    // });
 
     // TODO: 每次渲染的时候重新为纹理分配纹理空间
     if (this.texture) {
@@ -139,11 +125,12 @@ export default class Cube extends Group {
    * @param {*} type
    * @param {*} currentDataLocation
    */
-  addShaderUnifroms(location, type, currentDataLocation) {
+  addShaderUnifroms(location, type, currentDataLocation, vec) {
     this.shaderUnifroms.push({
       location,
       type,
       currentDataLocation,
+      vec,
     });
   }
 

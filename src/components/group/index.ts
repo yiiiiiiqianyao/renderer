@@ -1,7 +1,19 @@
 // @ts-nocheck
+import { Point } from '@/utils/interface';
 import { mat4, vec3 } from 'gl-matrix';
 import { generateUUID } from '../../utils/math';
 export default class Group {
+  public uuid: string;
+  public gl: WebGLRenderingContext;
+
+  public projMatrix: mat4;
+  public viewMatrix: mat4;
+  public modelMatrix: mat4;
+
+  public position: Point;
+
+  public cameraDistance: number;
+
   constructor(props) {
     this.uuid = generateUUID();
 

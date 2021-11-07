@@ -77,17 +77,38 @@ export function bindAttriBuffer(gl, attrName, vertices, count, program) {
   return { buffer, attr, count };
 }
 
-export function bindUnifrom4fv(gl, unifromName, data, program) {
-  let uniform4f = gl.getUniformLocation(program, unifromName);
-  if (uniform4f < 0) {
-    console.log('无法获取矩阵变量的存储位置');
+export function bindUnifrom(gl, unifromName, data, program, vec) {
+  let uniform = gl.getUniformLocation(program, unifromName);
+  if (uniform < 0) {
+    console.log('无法获取 uniform 变量的存储位置');
   }
-  gl.uniformMatrix4fv(uniform4f, false, data);
-  return uniform4f;
+  setUnifrom(gl, uniform, data, vec);
+  return uniform;
 }
 
-export function setUnifrom4fv(gl, location, data) {
-  gl.uniformMatrix4fv(location, false, data);
+export function setUnifrom(gl, location, data, vec) {
+  switch (vec) {
+    case 'float':
+      gl.uniform1f(location, data);
+      break;
+    case 'vec2':
+      gl.uniform2fv(location, data);
+      break;
+    case 'vec3':
+      gl.uniform3fv(location, data);
+      break;
+    case 'vec4':
+      gl.uniform4fv(location, data);
+      break;
+    case 'bool':
+      gl.uniform1i(location, data); // 1 - true    0 - false
+      break;
+    case 'sampler2d':
+      break;
+    case 'mat4':
+      gl.uniformMatrix4fv(location, false, data);
+      break;
+  }
 }
 
 export function initFramebuffer(gl) {

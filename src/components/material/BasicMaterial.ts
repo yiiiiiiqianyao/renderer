@@ -1,21 +1,52 @@
-// @ts-nocheck
 import Material from './Material';
 import Color from '../object/Color';
 import { loadImage } from '../../utils/texture';
 
+import { IColor } from '../object/Color';
+
+export interface IBasicMaterial {
+  color: IColor;
+  transparent: boolean;
+  opacity: number;
+  map?: any;
+  texture?: WebGLTexture | null;
+
+  init(gl: WebGLRenderingContext): void;
+}
+interface IBasicMaterialProps {
+  transparent?: boolean;
+  opacity?: number;
+  color?: string;
+  map?: any;
+  image?: HTMLImageElement;
+}
+
 export default class BasicMaterial extends Material {
-  constructor(props) {
-    super(props);
-    this.color = Color.isColor(props?.color)
-      ? props?.color
-      : new Color(props?.color);
+  public color: IColor;
+  public opacity: number = 1.0;
+  public transparent: boolean = false;
+  public map: any;
+  public image: HTMLImageElement;
+
+  public gl: WebGLRenderingContext;
+  public texture: WebGLTexture | null;
+
+  constructor(props: IBasicMaterialProps) {
+    super();
+    this.color = new Color(props.color);
+    props.opacity !== undefined && (this.opacity = props.opacity);
+    props.transparent !== undefined && (this.transparent = props.transparent);
+
     this.map = props?.map || undefined;
   }
 
   async init(gl: WebGLRenderingContext) {
     this.gl = gl;
     if (this.map) {
-      let { succeed, img } = await loadImage(this.map);
+      let { succeed, img } = (await loadImage(this.map)) as {
+        succeed: boolean;
+        img: HTMLImageElement;
+      };
       if (succeed) {
         this.image = img;
         this.initTexture();

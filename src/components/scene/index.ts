@@ -2,14 +2,20 @@
 import { ICamera } from '../../utils/camera';
 import { IPass } from '../pass/gray';
 import Group from '../group';
+import { distance } from '@/utils/math';
 // 场景类 主要是管理场景中所有的网格
+export interface IScene {
+  renderScene(): void;
+}
 
 interface ISceneProps {}
-export default class Scene extends Group {
-  private type: string = 'Scene';
-  private gl: WebGLRenderingContext;
+export default class Scene extends Group implements IScene {
+  public type: string = 'Scene';
+  public gl: WebGLRenderingContext;
   public camera: ICamera;
-  private passList: IPass[];
+  public passList: IPass[];
+  public children: any[] = [];
+
   constructor(props) {
     super(props);
 
@@ -32,7 +38,7 @@ export default class Scene extends Group {
     if (!this.hasChildren(mesh)) {
       mesh.parent && mesh.parent.remove(mesh);
       mesh.setParent(this);
-      this.childrens.push(mesh);
+      this.children.push(mesh);
 
       // 复写 add 方法
       mesh.scene = this;
@@ -54,6 +60,35 @@ export default class Scene extends Group {
     this.passList.push(pass);
   }
 
+  /**
+   * 绘制场景中所有的对象
+   */
+  drawElements() {
+    // 绘制透明物体 - 简单的透明绘制排序
+    let unTransparentMeshes = []; // 不透明 mesh
+    let transparentMeshes = []; // 透明 mesh
+
+    this.children.forEach(mesh => {
+      mesh.cameraDistance = distance(mesh.position, this.camera.position);
+
+      if (mesh.material.transparent) {
+        transparentMeshes.push(mesh);
+      } else {
+        unTransparentMeshes.push(mesh);
+      }
+    });
+
+    unTransparentMeshes.sort((a, b) => a.cameraDistance - b.cameraDistance);
+
+    unTransparentMeshes.map(mesh => mesh.draw(this.camera));
+
+    this.gl.depthMask(false);
+
+    transparentMeshes.map(mesh => mesh.draw(this.camera));
+
+    this.gl.depthMask(true);
+  }
+
   renderScene() {
     if (this.passList.length > 0) {
       for (let i = 0; i < this.passList.length; i++) {
@@ -62,7 +97,7 @@ export default class Scene extends Group {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         if (i === 0) {
           // 将场景内容绘制到 pass framebuffer
-          this.childrens.map(mesh => mesh.draw(this.camera));
+          this.drawElements();
         } else {
           // 将场景内容会到链接的 pass framebuffer
           // Tip: 还未完善
@@ -74,7 +109,7 @@ export default class Scene extends Group {
       }
     } else {
       this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-      this.childrens.map(mesh => mesh.draw(this.camera));
+      this.drawElements();
     }
   }
 }

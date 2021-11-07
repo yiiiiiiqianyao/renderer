@@ -20,6 +20,13 @@
               "meta": {
                 "order": 1
               }
+            },
+            {
+              "path": "/demo/blend",
+              "title": "blend demo",
+              "meta": {
+                "order": 1
+              }
             }
           ]
         }
