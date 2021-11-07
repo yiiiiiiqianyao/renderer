@@ -61,8 +61,13 @@ export default () => {
     });
 
     scene.add(plane);
+
+    // renderer.gl.depthMask(false);
+
     scene.add(plane3);
     scene.add(plane2);
+
+    // renderer.gl.depthMask(true);
 
     scene.renderScene();
 
