@@ -12,8 +12,6 @@ export default () => {
 
     let mat1 = new SR.BasicMaterial({
       color: 'green',
-      transparent: true,
-      opacity: 0.6,
     });
 
     let mat2 = new SR.BasicMaterial({
@@ -23,6 +21,7 @@ export default () => {
 
     let mat3 = new SR.BasicMaterial({
       color: 'blue',
+      transparent: true,
       opacity: 0.6,
     });
 
@@ -79,7 +78,7 @@ export default () => {
     });
 
     let r = 0;
-    // animate();
+    animate();
     function animate() {
       r += 0.01;
       plane && plane.setRotate([0, r, 0]); // 通过设置网格角度来更新旋转角度

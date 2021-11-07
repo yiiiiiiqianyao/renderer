@@ -1,13 +1,17 @@
 //@ts-nocheck
 import { mat4 } from 'gl-matrix';
+import { Point } from './interface';
 import { ViewPort } from './viewport';
 
 export interface ICamera {
+  position: Point;
+
   getViewMatrix(): mat4;
   getPerspectiveMatrix(): mat4;
 }
 // 简单的相机
 export default class Camera implements ICamera {
+  public position: number[];
   public aspect: number;
   constructor(props) {
     this.fov = props?.fov || 40;

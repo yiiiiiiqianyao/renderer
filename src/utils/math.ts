@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { Point } from './interface';
+
 export function calMeshModelMatrix(mesh) {}
 
 export function calMeshWorldModelMatrix(mesh) {}
@@ -48,4 +50,11 @@ export function isPowerOfTwo(value) {
 
 export function floorPowerOfTwo(value) {
   return Math.pow(2, Math.floor(Math.log(value) / Math.LN2));
+}
+
+export function distance(point1: Point, point2: Point) {
+  const r1 = Math.pow(point1[0] - point2[0], 2);
+  const r2 = Math.pow(point1[1] - point2[1], 2);
+  const r3 = Math.pow(point1[2] - point2[2], 2);
+  return Math.sqrt(r1 + r2 + r3);
 }

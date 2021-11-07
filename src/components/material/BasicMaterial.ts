@@ -5,15 +5,20 @@ import { loadImage } from '../../utils/texture';
 import { IColor } from '../object/Color';
 
 export interface IBasicMaterial {
+  color: IColor;
   transparent: boolean;
   opacity: number;
+  map?: any;
+  texture?: WebGLTexture | null;
+
+  init(gl: WebGLRenderingContext): void;
 }
 interface IBasicMaterialProps {
-  transparent: boolean;
+  transparent?: boolean;
   opacity?: number;
   color?: string;
   map?: any;
-  image: HTMLImageElement;
+  image?: HTMLImageElement;
 }
 
 export default class BasicMaterial extends Material {

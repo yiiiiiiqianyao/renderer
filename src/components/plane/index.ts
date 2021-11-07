@@ -4,13 +4,15 @@ import * as glUtils from '../../utils/gl';
 import Group from '../group';
 import { IScene } from '../scene';
 import Color, { IColor } from '../object/Color';
+import BasicMaterial, { IBasicMaterial } from '../material/BasicMaterial';
+import { distance } from '../../utils/math';
 export default class Plane extends Group {
   public type: string = 'PlaneMesh';
   public scene: IScene;
   public camera: ICamera;
   public color: IColor;
 
-  public material: any;
+  public material: IBasicMaterial = new BasicMaterial({});
   public width: number = 1;
   public height: number = 1;
 
@@ -25,7 +27,7 @@ export default class Plane extends Group {
   constructor(props: any) {
     super(props);
 
-    this.material = props?.material;
+    props.material !== undefined && (this.material = props.material);
     props.width !== undefined && (this.width = props.width);
     props.height !== undefined && (this.height = props.height);
 
@@ -37,7 +39,10 @@ export default class Plane extends Group {
   init(gl: WebGLRenderingContext, camera: ICamera) {
     this.gl = gl;
     this.camera = camera;
-    this.material?.init(this.gl);
+
+    this.cameraDistance = distance(camera.position, this.position);
+    // console.log('this.cameraDistance', this.cameraDistance)
+    this.material.init(this.gl);
 
     this.program = glUtils.createProgram(
       this.gl,
