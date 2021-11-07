@@ -1,8 +1,7 @@
 import Material from './Material';
-import Color from '../object/Color';
 import { loadImage } from '../../utils/texture';
 
-import { IColor } from '../object/Color';
+import Color, { IColor } from '../object/Color';
 
 export interface IBasicMaterial {
   color: IColor;
