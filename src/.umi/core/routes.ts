@@ -104,7 +104,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/blend.zh.md",
-          "updatedTime": 1636265963868,
+          "updatedTime": 1636291345000,
           "title": "blend demo",
           "order": 1,
           "slugs": [
