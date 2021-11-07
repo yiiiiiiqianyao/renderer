@@ -57,7 +57,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/index.md",
-          "updatedTime": 1635869128000,
+          "updatedTime": 1636202777000,
           "title": "API",
           "order": 4,
           "slugs": [
@@ -97,6 +97,34 @@ export function getRoutes() {
           }
         },
         "title": "simple demo - renderer"
+      },
+      {
+        "path": "/demo/blend",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/blend.zh.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/blend.zh.md",
+          "updatedTime": 1636265963868,
+          "title": "blend demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "标准地图",
+              "heading": "标准地图"
+            },
+            {
+              "depth": 2,
+              "value": "simple demo",
+              "heading": "simple-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "blend demo - renderer"
       },
       {
         "path": "/demo",

@@ -3,9 +3,12 @@ import { ICamera } from '../../utils/camera';
 import { IPass } from '../pass/gray';
 import Group from '../group';
 // 场景类 主要是管理场景中所有的网格
+export interface IScene {
+  renderScene(): void;
+}
 
 interface ISceneProps {}
-export default class Scene extends Group {
+export default class Scene extends Group implements IScene {
   private type: string = 'Scene';
   private gl: WebGLRenderingContext;
   public camera: ICamera;

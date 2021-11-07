@@ -1,14 +1,33 @@
+// @ts-nocheck
 const COLORS = ['red', 'yellow', 'blue', 'green', 'white', 'black'];
-export default class Color {
-  constructor(props) {
-    this.type = 'Color';
+
+export interface IColor {
+  type: string;
+  r: number;
+  g: number;
+  b: number;
+
+  handleStringColor(str: string): void;
+  handle16Color(): void;
+  getRGBA(): number[];
+  getRGB(): number[];
+}
+
+export default class Color implements IColor {
+  public type: string = 'Color';
+  public r: number = 1;
+  public g: number = 1;
+  public b: number = 1;
+  public a: number = 1;
+
+  constructor(props: string | undefined | IColor) {
     if (typeof props === 'string') {
       this.handleStringColor(props);
-    } else {
-      this.r = props?.r || 1;
-      this.g = props?.g || 1;
-      this.b = props?.b || 1;
-      this.a = props?.a || 1;
+    } else if (Color.isColor(props)) {
+      this.r = props.r;
+      this.g = props.g;
+      this.b = props.b;
+      this.a = props.a;
     }
   }
 
@@ -63,10 +82,18 @@ export default class Color {
     this.b = 1;
     this.a = 1;
   }
+
+  getRGBA() {
+    return [this.r, this.g, this.b, this.a];
+  }
+
+  getRGB() {
+    return [this.r, this.g, this.b];
+  }
 }
 
 Color.isColor = function(object) {
-  if (object.type && object.type === 'Color') {
+  if (object && object.type && object.type === 'Color') {
     return true;
   } else {
     return false;

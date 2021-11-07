@@ -2,7 +2,10 @@
 import { mat4 } from 'gl-matrix';
 import { ViewPort } from './viewport';
 
-export interface ICamera {}
+export interface ICamera {
+  getViewMatrix(): mat4;
+  getPerspectiveMatrix(): mat4;
+}
 // 简单的相机
 export default class Camera implements ICamera {
   public aspect: number;

@@ -1,22 +1,33 @@
-// @ts-nocheck
 import { ICamera } from '@/utils/camera';
+import { mat4 } from 'gl-matrix';
 import * as glUtils from '../../utils/gl';
-import { SHADER_PARAMS } from '../../utils/name';
 import Group from '../group';
+import { IScene } from '../scene';
+import Color, { IColor } from '../object/Color';
 export default class Plane extends Group {
-  public gl: WebGLRenderingContext;
+  public type: string = 'PlaneMesh';
+  public scene: IScene;
   public camera: ICamera;
+  public color: IColor;
 
-  constructor(props) {
+  public material: any;
+  public width: number = 1;
+  public height: number = 1;
+
+  public imgLoading: boolean = false;
+
+  public shaderUnifroms: any[];
+  public shaderAttributes: any[];
+
+  public program: WebGLProgram;
+  public texture: WebGLTexture;
+
+  constructor(props: any) {
     super(props);
-    this.type = 'PlaneMesh';
 
     this.material = props?.material;
-
-    this.width = props.width || 1;
-    this.height = props.height || 0.5;
-
-    this.imgLoading = false;
+    props.width !== undefined && (this.width = props.width);
+    props.height !== undefined && (this.height = props.height);
 
     // 当前对象的 shader 变量参数列表
     this.shaderUnifroms = [];
@@ -59,8 +70,9 @@ export default class Plane extends Group {
       0.0,
     ]);
     var FSIZE = rectVertices.BYTES_PER_ELEMENT;
+    this.color = new Color(this?.material?.color);
 
-    this.setMatrixs();
+    this.setUnifroms();
 
     this.shaderAttributes.push(
       glUtils.bindAttriBuffer(
@@ -86,57 +98,58 @@ export default class Plane extends Group {
   }
 
   /**
-   * 设置当前网格的矩阵、同时将矩阵传递给着色器
+   * 设置当前着色器的 uniform 变量
    */
-  setMatrixs() {
+  setUnifroms() {
     this.projMatrix = this.camera.getPerspectiveMatrix();
-    let u_projMatrixLocaion = glUtils.bindUnifrom4fv(
+    glUtils.bindUnifrom(
       this.gl,
       'u_projMatrix',
       this.projMatrix,
       this.program,
-    );
-    this.addShaderUnifroms(
-      u_projMatrixLocaion,
-      SHADER_PARAMS.UNIFROM,
-      this.projMatrix,
+      'mat4',
     );
 
     this.viewMatrix = this.camera.getViewMatrix();
-    let u_viewMatrixLocation = glUtils.bindUnifrom4fv(
+    glUtils.bindUnifrom(
       this.gl,
       'u_viewMatrix',
       this.viewMatrix,
       this.program,
-    );
-    this.addShaderUnifroms(
-      u_viewMatrixLocation,
-      SHADER_PARAMS.UNIFROM,
-      this.viewMatrix,
+      'mat4',
     );
 
-    let u_modelMatrixLocation = glUtils.bindUnifrom4fv(
+    glUtils.bindUnifrom(
       this.gl,
       'u_modelMatrix',
       this.modelMatrix,
       this.program,
+      'mat4',
     );
-    this.addShaderUnifroms(
-      u_modelMatrixLocation,
-      SHADER_PARAMS.UNIFROM,
-      this.modelMatrix,
+
+    glUtils.bindUnifrom(
+      this.gl,
+      'u_opacity',
+      this?.material?.opacity !== undefined ? this?.material?.opacity : 1.0,
+      this.program,
+      'float',
     );
+
+    glUtils.bindUnifrom(
+      this.gl,
+      'u_color',
+      this.color.getRGB(),
+      this.program,
+      'vec3',
+    );
+
+    // uniformName, data, vec
   }
 
   /**
    * 更新 shader 的 uniform 变量的值
    */
   updateShaderUnifroms() {
-    // reSetUnifrom
-    this.shaderUnifroms.map(({ location, currentDataLocation }) => {
-      glUtils.setUnifrom4fv(this.gl, location, currentDataLocation);
-    });
-
     // reBindBuffer
     this.shaderAttributes.map(({ buffer, attr, count }) => {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer); // 将缓冲区对象绑定到目标
@@ -144,8 +157,8 @@ export default class Plane extends Group {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
     });
 
-    // reBindMatrix
-    this.setMatrixs();
+    // reBindUnifrom
+    this.setUnifroms();
 
     // TODO: 每次渲染的时候重新为纹理分配纹理空间
     if (this.texture) {
@@ -157,16 +170,9 @@ export default class Plane extends Group {
 
   /**
    * 存储当前网格对象的 unifrom 变量
-   * @param {*} location
-   * @param {*} type
-   * @param {*} currentDataLocation
    */
-  addShaderUnifroms(location, type, currentDataLocation) {
-    this.shaderUnifroms.push({
-      location,
-      type,
-      currentDataLocation,
-    });
+  addShaderUnifroms(uniformName: string, data: any, vec: string) {
+    this.shaderUnifroms.push({ uniformName, data, vec });
   }
 
   /**
@@ -216,11 +222,14 @@ export default class Plane extends Group {
    */
   getRectFSHADER() {
     let firstLine = 'precision mediump float;\n';
-    let gl_FragColorLine = 'gl_FragColor = vec4(v_uv, 1.0, 1.0);\n';
-    let unifromLines = [];
+    let gl_FragColorLine = 'gl_FragColor = vec4(u_color, u_opacity);\n';
+
+    let unifromLines = ['uniform float u_opacity;\n', 'uniform vec3 u_color;'];
+
     if (this?.material?.map) {
       this.imgLoading = true;
-
+      unifromLines.push('uniform sampler2D u_Sampler;\n');
+      // @ts-ignore
       this.material?.on('loadImage', ({ texture, img }) => {
         this.gl.useProgram(this.program);
 
@@ -236,25 +245,20 @@ export default class Plane extends Group {
 
         this.imgLoading = false;
 
-        // setTimeout(() => {
-        //     this.scene && this.scene.renderScene()
-        // }, 300)
         this.scene && this.scene.renderScene();
       });
       gl_FragColorLine = 'gl_FragColor = texture2D(u_Sampler, v_uv);\n';
     }
+    // TODO: 拼装 shader
     const shader =
       firstLine +
       unifromLines.join('') +
       `
-            uniform sampler2D u_Sampler;
-            varying vec2 v_uv;
-            void main(){
-                ` +
-      gl_FragColorLine +
-      `
-            }
-        `;
+      varying vec2 v_uv;
+      void main(){
+        ${gl_FragColorLine}
+      }
+      `;
     return shader;
   }
 }
