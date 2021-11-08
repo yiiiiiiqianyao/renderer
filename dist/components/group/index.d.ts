@@ -6,6 +6,7 @@ export default class Group {
   projMatrix: mat4;
   viewMatrix: mat4;
   modelMatrix: mat4;
+  program: WebGLProgram;
   position: Point;
   cameraDistance: number;
   constructor(props: any);

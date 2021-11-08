@@ -149,12 +149,12 @@ function _getPrototypeOf(o) {
   return _getPrototypeOf(o);
 }
 
-import Material from './Material';
+import _Object2 from '../object/Object';
 import { loadImage } from '../../utils/texture';
 import Color from '../object/Color';
 
-var BasicMaterial = /*#__PURE__*/ (function(_Material) {
-  _inherits(BasicMaterial, _Material);
+var BasicMaterial = /*#__PURE__*/ (function(_Object) {
+  _inherits(BasicMaterial, _Object);
 
   var _super = _createSuper(BasicMaterial);
 
@@ -169,7 +169,6 @@ var BasicMaterial = /*#__PURE__*/ (function(_Material) {
     _this.transparent = false;
     _this.map = void 0;
     _this.image = void 0;
-    _this.gl = void 0;
     _this.texture = void 0;
     _this.color = new Color(props.color);
     props.opacity !== undefined && (_this.opacity = props.opacity);
@@ -274,6 +273,6 @@ var BasicMaterial = /*#__PURE__*/ (function(_Material) {
   ]);
 
   return BasicMaterial;
-})(Material);
+})(Object);
 
 export { BasicMaterial as default };

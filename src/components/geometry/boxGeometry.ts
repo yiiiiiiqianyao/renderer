@@ -1,10 +1,19 @@
 // @ts-nocheck
 import * as glUtils from '../../utils/gl';
-import Group from '../group';
+import Geometry from './geometry';
 import { distance } from '../../utils/math';
 import { ICamera } from '../../utils/camera';
-export default class Box extends Group {
+import BasicMaterial, { IBasicMaterial } from '../material/BasicMaterial';
+import {
+  initBoxGeometryVertices,
+  initBoxGeometryColors,
+  initBoxGeometryIndices,
+} from '../utils/geoVertices';
+export default class BoxGeometry extends Geometry {
   public type: string = 'CubeMesh';
+
+  public material: IBasicMaterial = new BasicMaterial({});
+
   public shaderAttributes: any[];
   public indices: Uint8Array | null;
   public indicesBuffer: WebGLBuffer | null;
@@ -13,16 +22,11 @@ export default class Box extends Group {
 
     props.material !== undefined && (this.material = props.material);
 
-    this.width = 1;
-    this.height = 0.5;
-
     // 当前对象的 shader 变量参数列表
-    this.shaderUnifroms = [];
     this.shaderAttributes = [];
   }
 
   init(gl: WebGLRenderingContext, camera: ICamera) {
-    console.log('init');
     this.gl = gl;
     this.camera = camera;
 
@@ -36,222 +40,11 @@ export default class Box extends Group {
     );
     this.gl.useProgram(this.program);
 
-    // 创建一个立方体
-    //    v6----- v5
-    //   /|      /|
-    //  v1------v0|
-    //  | |     | |
-    //  | |v7---|-|v4
-    //  |/      |/
-    //  v2------v3
-    let cubeVertices = new Float32Array([
-      // 设置顶点和颜色
-      1.0,
-      1.0,
-      1.0, // v0 front
-      -1.0,
-      1.0,
-      1.0, // v1
-      -1.0,
-      -1.0,
-      1.0, // v2
-      1.0,
-      -1.0,
-      1.0, // v3
+    this.vertices = initBoxGeometryVertices();
 
-      1.0,
-      -1.0,
-      -1.0, // v4 back
-      1.0,
-      1.0,
-      -1.0, // v5
-      -1.0,
-      1.0,
-      -1.0, // v6
-      -1.0,
-      -1.0,
-      -1.0, // v7
+    this.colors = initBoxGeometryColors();
 
-      1.0,
-      1.0,
-      -1.0, // v8 right
-      1.0,
-      1.0,
-      1.0, // v9
-      1.0,
-      -1.0,
-      1.0, // v10
-      1.0,
-      -1.0,
-      -1.0, // v11
-
-      -1.0,
-      1.0,
-      -1.0, // v12 top
-      -1.0,
-      1.0,
-      1.0, // v3
-      1.0,
-      1.0,
-      1.0, // v14
-      1.0,
-      1.0,
-      -1.0, // v15
-
-      1.0,
-      -1.0,
-      1.0, // v16 down
-      -1.0,
-      -1.0,
-      1.0, // v17
-      -1.0,
-      -1.0,
-      -1.0, // v18
-      1.0,
-      -1.0,
-      -1.0, // v19
-
-      -1.0,
-      1.0,
-      1.0, // v1 left
-      -1.0,
-      1.0,
-      -1.0, // v6
-      -1.0,
-      -1.0,
-      -1.0, // v7
-      -1.0,
-      -1.0,
-      1.0, // v2
-    ]);
-
-    let cubeColors = new Float32Array([
-      // 设置顶点和颜色
-      1.0,
-      1.0,
-      1.0, // v0 front
-      1.0,
-      1.0,
-      1.0, // v1
-      1.0,
-      1.0,
-      1.0, // v2
-      1.0,
-      1.0,
-      1.0, // v3
-
-      0.0,
-      1.0,
-      1.0, // v4 back
-      0.0,
-      1.0,
-      1.0, // v5
-      0.0,
-      1.0,
-      1.0, // v6
-      0.0,
-      1.0,
-      1.0, // v7
-
-      1.0,
-      1.0,
-      0.0, // v8 right
-      1.0,
-      1.0,
-      0.0, // v9
-      1.0,
-      1.0,
-      0.0, // v10
-      1.0,
-      1.0,
-      0.0, // v11
-
-      1.0,
-      0.0,
-      0.0, // v12 top
-      1.0,
-      0.0,
-      0.0, // v3
-      1.0,
-      0.0,
-      0.0, // v14
-      1.0,
-      0.0,
-      0.0, // v15
-
-      0.0,
-      1.0,
-      0.0, // v16 down
-      0.0,
-      1.0,
-      0.0, // v17
-      0.0,
-      1.0,
-      0.0, // v18
-      0.0,
-      1.0,
-      0.0, // v19
-
-      0.0,
-      0.0,
-      1.0, // v1 left
-      0.0,
-      0.0,
-      1.0, // v6
-      0.0,
-      0.0,
-      1.0, // v7
-      0.0,
-      0.0,
-      1.0, // v2
-    ]);
-
-    // let FSIZE = cubeVertices.BYTES_PER_ELEMENT;
-
-    this.indices = new Uint8Array([
-      //顶点索引
-      0,
-      1,
-      2,
-      0,
-      2,
-      3, // 前
-
-      6,
-      5,
-      4,
-      6,
-      4,
-      7, // 后
-
-      8,
-      9,
-      10,
-      8,
-      10,
-      11,
-
-      12,
-      13,
-      14,
-      12,
-      14,
-      15,
-
-      16,
-      17,
-      18,
-      16,
-      18,
-      19,
-
-      20,
-      21,
-      22,
-      20,
-      22,
-      23,
-    ]);
+    this.indices = initBoxGeometryIndices();
 
     this.setUnifroms();
 
@@ -259,14 +52,14 @@ export default class Box extends Group {
       glUtils.bindAttriBuffer(
         this.gl,
         'a_Position',
-        cubeVertices,
+        this.vertices,
         3,
         this.program,
       ),
     );
 
     this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(this.gl, 'a_Color', cubeColors, 3, this.program),
+      glUtils.bindAttriBuffer(this.gl, 'a_Color', this.colors, 3, this.program),
     );
 
     this.indicesBuffer = glUtils.bindAttriIndicesBuffer(this.gl, this.indices);
@@ -284,7 +77,7 @@ export default class Box extends Group {
    */
   setUnifroms() {
     this.projMatrix = this.camera.getPerspectiveMatrix();
-    let u_projMatrixLocaion = glUtils.bindUnifrom(
+    glUtils.bindUnifrom(
       this.gl,
       'u_projMatrix',
       this.projMatrix,
@@ -293,7 +86,7 @@ export default class Box extends Group {
     );
 
     this.viewMatrix = this.camera.getViewMatrix();
-    let u_viewMatrixLocation = glUtils.bindUnifrom(
+    glUtils.bindUnifrom(
       this.gl,
       'u_viewMatrix',
       this.viewMatrix,
@@ -301,7 +94,7 @@ export default class Box extends Group {
       'mat4',
     );
 
-    let u_modelMatrixLocation = glUtils.bindUnifrom(
+    glUtils.bindUnifrom(
       this.gl,
       'u_modelMatrix',
       this.modelMatrix,
@@ -340,28 +133,6 @@ export default class Box extends Group {
       var u_Sampler = this.gl.getUniformLocation(this.program, 'u_Sampler');
       this.gl.uniform1i(u_Sampler, 0);
     }
-  }
-
-  /**
-   * 存储当前网格对象的 unifrom 变量
-   */
-  addShaderUnifroms(uniformName: string, data: any, vec: string) {
-    this.shaderUnifroms.push({ uniformName, data, vec });
-  }
-
-  /**
-   * 存储当前网格对象的 unifrom 变量
-   * @param {*} location
-   * @param {*} type
-   * @param {*} currentDataLocation
-   */
-  addShaderUnifroms(location, type, currentDataLocation, vec) {
-    this.shaderUnifroms.push({
-      location,
-      type,
-      currentDataLocation,
-      vec,
-    });
   }
 
   /**

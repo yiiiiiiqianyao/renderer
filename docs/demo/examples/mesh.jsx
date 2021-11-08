@@ -7,27 +7,17 @@ export default () => {
   React.useEffect(() => {
     let renderer = new SR.Renderer({
       wrap: 'wrap',
-      clearColor: new SR.Color([0, 0, 0, 1]),
+      clearColor: new SR.Color([1, 0, 0, 1]),
     });
 
     let mat1 = new SR.BasicMaterial({
-      color: 'green',
-    });
-
-    let mat2 = new SR.BasicMaterial({
-      transparent: true,
-      opacity: 0.6,
-    });
-
-    let mat3 = new SR.BasicMaterial({
       color: 'blue',
-      transparent: true,
-      opacity: 0.6,
+      map: Img,
     });
 
     let camera = new SR.Camera({
       target: [0, 0, 0],
-      position: [0, 1, 5],
+      position: [1, 1, 3],
       aspect: renderer.renderPixelWidth / renderer.renderPixelHeight,
     });
 
@@ -40,33 +30,18 @@ export default () => {
     let plane = new SR.PlaneGeometry({
       width: 1,
       height: 1,
-      position: [0, 0, 0],
-      rotation: [0, 0, 0],
+      position: [-1, 0, 0],
+      rotation: [0, 0.3, 0],
       material: mat1,
-    });
-
-    let plane2 = new SR.PlaneGeometry({
-      width: 0.5,
-      height: 0.5,
-      position: [0, 0, 1],
-      material: mat2,
-    });
-
-    let plane3 = new SR.PlaneGeometry({
-      height: 0.5,
-      position: [0, 0, 2],
-      rotation: [0, 0, 0],
-      material: mat3,
     });
 
     scene.add(plane);
 
-    // renderer.gl.depthMask(false);
-
-    scene.add(plane3);
-    scene.add(plane2);
-
-    // renderer.gl.depthMask(true);
+    let mesh = new SR.Mesh({
+      geometry: plane,
+      material: mat1,
+    });
+    scene.add(mesh);
 
     scene.renderScene();
 
@@ -76,9 +51,14 @@ export default () => {
 
       scene.renderScene();
     });
+    // scene.setTranslete([1, 0, 0])
+
+    // add test pass - webgl1
+    // const grayPass = new SR.GrayPass({  });
+    // scene.addPass(grayPass);
 
     let r = 0;
-    animate();
+    // animate();
     function animate() {
       r += 0.01;
       plane && plane.setRotate([0, r, 0]); // 通过设置网格角度来更新旋转角度

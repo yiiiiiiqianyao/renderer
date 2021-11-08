@@ -1,26 +1,28 @@
 import { ICamera } from '@/utils/camera';
 import * as glUtils from '../../utils/gl';
-import Group from '../group';
+import Geometry from './geometry';
 import { IScene } from '../scene';
 import Color, { IColor } from '../object/Color';
-import BasicMaterial, { IBasicMaterial } from '../material/BasicMaterial';
+import BasicMaterial, { IMaterial } from '../material/BasicMaterial';
 import { distance } from '../../utils/math';
-export default class Plane extends Group {
+import {
+  initPlaneGeometryVertices,
+  initPlaneGeometryUvs,
+} from '../utils/geoVertices';
+export default class PlaneGeometry extends Geometry {
   public type: string = 'PlaneMesh';
   public scene: IScene;
   public camera: ICamera;
   public color: IColor;
 
-  public material: IBasicMaterial = new BasicMaterial({});
+  public material: IMaterial = new BasicMaterial({});
   public width: number = 1;
   public height: number = 1;
 
   public imgLoading: boolean = false;
 
-  public shaderUnifroms: any[];
   public shaderAttributes: any[];
 
-  public program: WebGLProgram;
   public texture: WebGLTexture;
 
   constructor(props: any) {
@@ -31,7 +33,6 @@ export default class Plane extends Group {
     props.height !== undefined && (this.height = props.height);
 
     // 当前对象的 shader 变量参数列表
-    this.shaderUnifroms = [];
     this.shaderAttributes = [];
   }
 
@@ -49,30 +50,10 @@ export default class Plane extends Group {
     );
     this.gl.useProgram(this.program);
 
-    var rectVertices = new Float32Array([
-      // 将纹理 st/uv 映射到顶点坐标
-      -this.width / 2,
-      this.height / 2, //左上角
-      -this.width / 2,
-      -this.height / 2, //左下角
-      this.width / 2,
-      this.height / 2, //右上角
-      this.width / 2,
-      -this.height / 2, //右下角
-    ]);
+    this.vertices = initPlaneGeometryVertices(this.width, this.height);
 
-    var rectUvs = new Float32Array([
-      // rect uvs
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      1.0,
-      1.0,
-      1.0,
-      0.0,
-    ]);
-    var FSIZE = rectVertices.BYTES_PER_ELEMENT;
+    this.uvs = initPlaneGeometryUvs();
+
     this.color = new Color(this?.material?.color);
 
     this.setUnifroms();
@@ -81,13 +62,19 @@ export default class Plane extends Group {
       glUtils.bindAttriBuffer(
         this.gl,
         'a_Position',
-        rectVertices,
+        this.vertices,
         2,
         this.program,
       ),
     );
     this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(this.gl, 'a_TextCoord', rectUvs, 2, this.program),
+      glUtils.bindAttriBuffer(
+        this.gl,
+        'a_TextCoord',
+        this.uvs,
+        2,
+        this.program,
+      ),
     );
 
     this.gl.useProgram(null);
@@ -169,13 +156,6 @@ export default class Plane extends Group {
       var u_Sampler = this.gl.getUniformLocation(this.program, 'u_Sampler');
       this.gl.uniform1i(u_Sampler, 0);
     }
-  }
-
-  /**
-   * 存储当前网格对象的 unifrom 变量
-   */
-  addShaderUnifroms(uniformName: string, data: any, vec: string) {
-    this.shaderUnifroms.push({ uniformName, data, vec });
   }
 
   /**

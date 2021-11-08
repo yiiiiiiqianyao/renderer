@@ -34,6 +34,13 @@
               "meta": {
                 "order": 1
               }
+            },
+            {
+              "path": "/demo/mesh",
+              "title": "mesh demo",
+              "meta": {
+                "order": 1
+              }
             }
           ]
         }

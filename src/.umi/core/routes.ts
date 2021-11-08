@@ -132,7 +132,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/box.md",
-          "updatedTime": 1636362698460,
+          "updatedTime": 1636364326000,
           "title": "cube demo",
           "order": 1,
           "slugs": [
@@ -153,6 +153,34 @@ export function getRoutes() {
           }
         },
         "title": "cube demo - renderer"
+      },
+      {
+        "path": "/demo/mesh",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/mesh.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/mesh.md",
+          "updatedTime": 1636375440430,
+          "title": "mesh demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "标准地图",
+              "heading": "标准地图"
+            },
+            {
+              "depth": 2,
+              "value": "mesh demo",
+              "heading": "mesh-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "mesh demo - renderer"
       },
       {
         "path": "/demo",

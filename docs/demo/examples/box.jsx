@@ -26,7 +26,7 @@ export default () => {
       renderer,
     });
 
-    let plane = new SR.Plane({
+    let plane = new SR.PlaneGeometry({
       width: 1,
       height: 1,
       position: [-1, 0, 0],
@@ -35,7 +35,7 @@ export default () => {
     });
     scene.add(plane);
 
-    let box = new SR.Box({});
+    let box = new SR.BoxGeometry({});
     scene.add(box);
 
     scene.renderScene();
@@ -53,14 +53,14 @@ export default () => {
     // scene.addPass(grayPass);
 
     let r = 0;
-    // animate();
+    animate();
     function animate() {
       r += 0.01;
-      plane && plane.setRotate([0, r, 0]); // 通过设置网格角度来更新旋转角度
-      plane2 && plane2.setRotate([r, 0, 0]); // 通过设置网格角度来更新旋转角度
-      plane3 && plane3.rotate([0, 0.02, 0]); // 通过旋转网格来更新旋转角度
+      box && box.setRotate([0, r, 0]); // 通过设置网格角度来更新旋转角度
+      // plane2 && plane2.setRotate([r, 0, 0]); // 通过设置网格角度来更新旋转角度
+      // plane3 && plane3.rotate([0, 0.02, 0]); // 通过旋转网格来更新旋转角度
 
-      scene.rotate([0, 0.01, 0]);
+      // scene.rotate([0, 0.01, 0]);
       // plane && plane.setTranslete([-Math.sin(r)/2, 0, -Math.cos(r)/2])
 
       // scene.setTranslete([Math.sin(r) * 1, 0, Math.cos(r) * 1]);

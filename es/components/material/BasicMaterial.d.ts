@@ -1,6 +1,6 @@
-import Material from './Material';
+import Object from '../object/Object';
 import { IColor } from '../object/Color';
-export interface IBasicMaterial {
+export interface IMaterial {
   color: IColor;
   transparent: boolean;
   opacity: number;
@@ -15,13 +15,12 @@ interface IBasicMaterialProps {
   map?: any;
   image?: HTMLImageElement;
 }
-export default class BasicMaterial extends Material {
+export default class BasicMaterial extends Object {
   color: IColor;
   opacity: number;
   transparent: boolean;
   map: any;
   image: HTMLImageElement;
-  gl: WebGLRenderingContext;
   texture: WebGLTexture | null;
   constructor(props: IBasicMaterialProps);
   init(gl: WebGLRenderingContext): Promise<void>;

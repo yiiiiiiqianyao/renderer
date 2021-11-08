@@ -1,25 +1,37 @@
-// @ts-nocheck
-export default class Material {
+export interface IObject {
+  gl: WebGLRenderingContext;
+  program: WebGLProgram;
+
+  on: (name: string, fn: (options: any) => any) => void;
+  emit: (name: string, val: any) => void;
+  off: (name: string, fn: (options: any) => any) => void;
+}
+export default class Object {
+  private listeners: any;
+
+  public gl: WebGLRenderingContext;
+  public program: WebGLProgram;
+
   constructor() {
     this.listeners = {};
   }
 
-  on(name, fn) {
+  on(name: string, fn: (options: any) => any) {
     if (!this.listeners[name]) {
       this.listeners[name] = [];
     }
     this.listeners[name].push(fn);
   }
 
-  emit(name, val) {
+  emit(name: string, val: any) {
     if (this.listeners[name]) {
-      this.listeners[name].map(fn => {
+      this.listeners[name].map((fn: (options: any) => any) => {
         fn(val);
       });
     }
   }
 
-  off(name, fn) {
+  off(name: string, fn: (options: any) => any) {
     if (this.listeners[name]) {
       if (fn) {
         let index = this.listeners[name].indexOf(fn);

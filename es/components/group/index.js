@@ -77,6 +77,7 @@ var Group = /*#__PURE__*/ (function() {
     this.projMatrix = void 0;
     this.viewMatrix = void 0;
     this.modelMatrix = void 0;
+    this.program = void 0;
     this.position = void 0;
     this.cameraDistance = void 0;
     this.uuid = generateUUID();

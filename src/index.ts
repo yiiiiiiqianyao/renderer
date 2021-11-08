@@ -5,9 +5,21 @@ import Renderer from './components/renderer';
 import BasicMaterial from './components/material/BasicMaterial';
 import Color from './components/object/Color';
 
-import Plane from './components/geometry/plane';
-import Box from './components/geometry/box';
+import PlaneGeometry from './components/geometry/planeGeometry';
+import BoxGeometry from './components/geometry/boxGeometry';
+
+import Mesh from './components/object/Mesh';
 
 import GrayPass from './components/pass/gray';
 
-export { Scene, Camera, Renderer, BasicMaterial, Color, Plane, Box, GrayPass };
+export {
+  Scene,
+  Camera,
+  Renderer,
+  BasicMaterial,
+  Color,
+  PlaneGeometry,
+  BoxGeometry,
+  Mesh,
+  GrayPass,
+};

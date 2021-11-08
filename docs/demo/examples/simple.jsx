@@ -32,7 +32,7 @@ export default () => {
       renderer,
     });
 
-    let plane = new SR.Plane({
+    let plane = new SR.PlaneGeometry({
       width: 1,
       height: 1,
       position: [-1, 0, 0],
@@ -40,14 +40,14 @@ export default () => {
       material: mat1,
     });
 
-    let plane2 = new SR.Plane({
+    let plane2 = new SR.PlaneGeometry({
       width: 0.5,
       height: 0.5,
       position: [-0.3, 0, 2],
       material: mat2,
     });
 
-    let plane3 = new SR.Plane({
+    let plane3 = new SR.PlaneGeometry({
       position: [1, 0, 0.4],
       rotation: [Math.PI / 2, 0, 0],
     });

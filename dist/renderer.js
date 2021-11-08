@@ -897,6 +897,7 @@
       this.projMatrix = void 0;
       this.viewMatrix = void 0;
       this.modelMatrix = void 0;
+      this.program = void 0;
       this.position = void 0;
       this.cameraDistance = void 0;
       this.uuid = generateUUID();
@@ -1591,15 +1592,17 @@
     return Renderer;
   })();
 
-  // @ts-nocheck
-  var Material = /*#__PURE__*/ (function() {
-    function Material() {
-      _classCallCheck(this, Material);
+  var Object$1 = /*#__PURE__*/ (function() {
+    function Object() {
+      _classCallCheck(this, Object);
 
+      this.listeners = void 0;
+      this.gl = void 0;
+      this.program = void 0;
       this.listeners = {};
     }
 
-    _createClass(Material, [
+    _createClass(Object, [
       {
         key: 'on',
         value: function on(name, fn) {
@@ -1638,7 +1641,7 @@
       },
     ]);
 
-    return Material;
+    return Object;
   })();
 
   // @ts-nocheck
@@ -1693,8 +1696,8 @@
     });
   }
 
-  var BasicMaterial = /*#__PURE__*/ (function(_Material) {
-    _inherits(BasicMaterial, _Material);
+  var BasicMaterial = /*#__PURE__*/ (function(_Object) {
+    _inherits(BasicMaterial, _Object);
 
     var _super = _createSuper(BasicMaterial);
 
@@ -1709,7 +1712,6 @@
       _this.transparent = false;
       _this.map = void 0;
       _this.image = void 0;
-      _this.gl = void 0;
       _this.texture = void 0;
       _this.color = new Color(props.color);
       props.opacity !== undefined && (_this.opacity = props.opacity);
@@ -1815,7 +1817,7 @@
     ]);
 
     return BasicMaterial;
-  })(Material);
+  })(Object$1);
 
   // @ts-nocheck
   function createProgram(gl, vshader, fshader) {
@@ -2011,15 +2013,269 @@
     };
   }
 
-  var Plane = /*#__PURE__*/ (function(_Group) {
-    _inherits(Plane, _Group);
+  var Geometry = /*#__PURE__*/ (function(_Group) {
+    _inherits(Geometry, _Group);
 
-    var _super = _createSuper(Plane);
+    var _super = _createSuper(Geometry);
 
-    function Plane(props) {
+    function Geometry(props) {
       var _this;
 
-      _classCallCheck(this, Plane);
+      _classCallCheck(this, Geometry);
+
+      _this = _super.call(this, props);
+      _this.indices = void 0;
+      _this.indicesBuffer = void 0;
+      _this.vertices = void 0;
+      _this.colors = void 0;
+      _this.uvs = void 0;
+      return _this;
+    }
+
+    return Geometry;
+  })(Group);
+
+  /**
+   * 存储一些计算网格顶点相关的计算方法
+   */
+  function initPlaneGeometryVertices(width, height) {
+    return new Float32Array([
+      -width / 2,
+      height / 2,
+      -width / 2,
+      -height / 2,
+      width / 2,
+      height / 2,
+      width / 2,
+      -height / 2, //右下角
+    ]);
+  }
+  function initPlaneGeometryUvs() {
+    return new Float32Array([
+      // rect uvs
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+    ]);
+  } // 创建一个立方体
+  //    v6----- v5
+  //   /|      /|
+  //  v1------v0|
+  //  | |     | |
+  //  | |v7---|-|v4
+  //  |/      |/
+  //  v2------v3
+
+  function initBoxGeometryVertices() {
+    return new Float32Array([
+      // 设置顶点和颜色
+      1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      1.0, // v2
+    ]);
+  }
+  function initBoxGeometryColors() {
+    return new Float32Array([
+      // 设置顶点和颜色
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0, // v2
+    ]);
+  }
+  function initBoxGeometryIndices() {
+    return new Uint8Array([
+      //顶点索引
+      0,
+      1,
+      2,
+      0,
+      2,
+      3,
+      6,
+      5,
+      4,
+      6,
+      4,
+      7,
+      8,
+      9,
+      10,
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      16,
+      18,
+      19,
+      20,
+      21,
+      22,
+      20,
+      22,
+      23,
+    ]);
+  }
+
+  var PlaneGeometry = /*#__PURE__*/ (function(_Geometry) {
+    _inherits(PlaneGeometry, _Geometry);
+
+    var _super = _createSuper(PlaneGeometry);
+
+    function PlaneGeometry(props) {
+      var _this;
+
+      _classCallCheck(this, PlaneGeometry);
 
       _this = _super.call(this, props);
       _this.type = 'PlaneMesh';
@@ -2030,20 +2286,17 @@
       _this.width = 1;
       _this.height = 1;
       _this.imgLoading = false;
-      _this.shaderUnifroms = void 0;
       _this.shaderAttributes = void 0;
-      _this.program = void 0;
       _this.texture = void 0;
       props.material !== undefined && (_this.material = props.material);
       props.width !== undefined && (_this.width = props.width);
       props.height !== undefined && (_this.height = props.height); // 当前对象的 shader 变量参数列表
 
-      _this.shaderUnifroms = [];
       _this.shaderAttributes = [];
       return _this;
     }
 
-    _createClass(Plane, [
+    _createClass(PlaneGeometry, [
       {
         key: 'init',
         value: function init(gl, camera) {
@@ -2059,28 +2312,8 @@
             this.getRectFSHADER(),
           );
           this.gl.useProgram(this.program);
-          var rectVertices = new Float32Array([
-            // 将纹理 st/uv 映射到顶点坐标
-            -this.width / 2,
-            this.height / 2,
-            -this.width / 2,
-            -this.height / 2,
-            this.width / 2,
-            this.height / 2,
-            this.width / 2,
-            -this.height / 2, //右下角
-          ]);
-          var rectUvs = new Float32Array([
-            // rect uvs
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-          ]);
+          this.vertices = initPlaneGeometryVertices(this.width, this.height);
+          this.uvs = initPlaneGeometryUvs();
           this.color = new Color(
             this === null || this === void 0
               ? void 0
@@ -2094,13 +2327,13 @@
             bindAttriBuffer(
               this.gl,
               'a_Position',
-              rectVertices,
+              this.vertices,
               2,
               this.program,
             ),
           );
           this.shaderAttributes.push(
-            bindAttriBuffer(this.gl, 'a_TextCoord', rectUvs, 2, this.program),
+            bindAttriBuffer(this.gl, 'a_TextCoord', this.uvs, 2, this.program),
           );
           this.gl.useProgram(null);
         },
@@ -2213,19 +2446,6 @@
           }
         },
         /**
-         * 存储当前网格对象的 unifrom 变量
-         */
-      },
-      {
-        key: 'addShaderUnifroms',
-        value: function addShaderUnifroms(uniformName, data, vec) {
-          this.shaderUnifroms.push({
-            uniformName: uniformName,
-            data: data,
-            vec: vec,
-          });
-        },
-        /**
          * 绘制当前的网格对象
          */
       },
@@ -2324,34 +2544,32 @@
       },
     ]);
 
-    return Plane;
-  })(Group);
+    return PlaneGeometry;
+  })(Geometry);
 
-  var Box = /*#__PURE__*/ (function(_Group) {
-    _inherits(Box, _Group);
+  var BoxGeometry = /*#__PURE__*/ (function(_Geometry) {
+    _inherits(BoxGeometry, _Geometry);
 
-    var _super = _createSuper(Box);
+    var _super = _createSuper(BoxGeometry);
 
-    function Box(props) {
+    function BoxGeometry(props) {
       var _this;
 
-      _classCallCheck(this, Box);
+      _classCallCheck(this, BoxGeometry);
 
       _this = _super.call(this, props);
       _this.type = 'CubeMesh';
+      _this.material = new BasicMaterial({});
       _this.shaderAttributes = void 0;
       _this.indices = void 0;
       _this.indicesBuffer = void 0;
-      props.material !== undefined && (_this.material = props.material);
-      _this.width = 1;
-      _this.height = 0.5; // 当前对象的 shader 变量参数列表
+      props.material !== undefined && (_this.material = props.material); // 当前对象的 shader 变量参数列表
 
-      _this.shaderUnifroms = [];
       _this.shaderAttributes = [];
       return _this;
     }
 
-    _createClass(Box, [
+    _createClass(BoxGeometry, [
       {
         key: 'init',
         value: function init(gl, camera) {
@@ -2368,214 +2586,22 @@
             this.getCubeVSHADER(),
             this.getCubeFSHADER(),
           );
-          this.gl.useProgram(this.program); // 创建一个立方体
-          //    v6----- v5
-          //   /|      /|
-          //  v1------v0|
-          //  | |     | |
-          //  | |v7---|-|v4
-          //  |/      |/
-          //  v2------v3
-
-          var cubeVertices = new Float32Array([
-            1.0,
-            1.0,
-            1.0,
-            -1.0,
-            1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            1.0,
-            -1.0,
-            1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            1.0,
-            -1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            -1.0,
-            1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            -1.0,
-            1.0,
-            -1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            1.0,
-            1.0,
-            -1.0,
-            1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            1.0, // v2
-          ]);
-          var cubeColors = new Float32Array([
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0, // v2
-          ]); // let FSIZE = cubeVertices.BYTES_PER_ELEMENT;
-
-          this.indices = new Uint8Array([
-            0,
-            1,
-            2,
-            0,
-            2,
-            3,
-            6,
-            5,
-            4,
-            6,
-            4,
-            7,
-            8,
-            9,
-            10,
-            8,
-            10,
-            11,
-            12,
-            13,
-            14,
-            12,
-            14,
-            15,
-            16,
-            17,
-            18,
-            16,
-            18,
-            19,
-            20,
-            21,
-            22,
-            20,
-            22,
-            23,
-          ]);
+          this.gl.useProgram(this.program);
+          this.vertices = initBoxGeometryVertices();
+          this.colors = initBoxGeometryColors();
+          this.indices = initBoxGeometryIndices();
           this.setUnifroms();
           this.shaderAttributes.push(
             bindAttriBuffer(
               this.gl,
               'a_Position',
-              cubeVertices,
+              this.vertices,
               3,
               this.program,
             ),
           );
           this.shaderAttributes.push(
-            bindAttriBuffer(this.gl, 'a_Color', cubeColors, 3, this.program),
+            bindAttriBuffer(this.gl, 'a_Color', this.colors, 3, this.program),
           );
           this.indicesBuffer = bindAttriIndicesBuffer(this.gl, this.indices);
         },
@@ -2596,7 +2622,7 @@
         key: 'setUnifroms',
         value: function setUnifroms() {
           this.projMatrix = this.camera.getPerspectiveMatrix();
-          var u_projMatrixLocaion = bindUnifrom(
+          bindUnifrom(
             this.gl,
             'u_projMatrix',
             this.projMatrix,
@@ -2604,14 +2630,14 @@
             'mat4',
           );
           this.viewMatrix = this.camera.getViewMatrix();
-          var u_viewMatrixLocation = bindUnifrom(
+          bindUnifrom(
             this.gl,
             'u_viewMatrix',
             this.viewMatrix,
             this.program,
             'mat4',
           );
-          var u_modelMatrixLocation = bindUnifrom(
+          bindUnifrom(
             this.gl,
             'u_modelMatrix',
             this.modelMatrix,
@@ -2672,27 +2698,6 @@
           }
         },
         /**
-         * 存储当前网格对象的 unifrom 变量
-         */
-      },
-      {
-        key: 'addShaderUnifroms',
-        value:
-          /**
-           * 存储当前网格对象的 unifrom 变量
-           * @param {*} location
-           * @param {*} type
-           * @param {*} currentDataLocation
-           */
-          function addShaderUnifroms(location, type, currentDataLocation, vec) {
-            this.shaderUnifroms.push({
-              location: location,
-              type: type,
-              currentDataLocation: currentDataLocation,
-              vec: vec,
-            });
-          },
-        /**
          * 绘制当前的网格对象
          */
       },
@@ -2736,7 +2741,211 @@
       },
     ]);
 
-    return Box;
+    return BoxGeometry;
+  })(Geometry);
+
+  var Mesh = /*#__PURE__*/ (function(_Group) {
+    _inherits(Mesh, _Group);
+
+    var _super = _createSuper(Mesh);
+
+    function Mesh(props) {
+      var _this;
+
+      _classCallCheck(this, Mesh);
+
+      _this = _super.call(this, props);
+      _this.scene = void 0;
+      _this.camera = void 0;
+      _this.imgLoading = false;
+      _this.texture = void 0;
+      _this.material = new BasicMaterial({});
+      _this.geometry = void 0;
+      _this.shaderAttributes = [];
+      _this.color = void 0;
+      console.log(props);
+      props.material !== undefined && (_this.material = props.material);
+      _this.geometry = props.geometry;
+      return _this;
+    }
+
+    _createClass(Mesh, [
+      {
+        key: 'init',
+        value: function init(gl, camera) {
+          var _this$material;
+
+          this.gl = gl;
+          this.camera = camera;
+          this.cameraDistance = distance(camera.position, this.position);
+          this.material.init(this.gl);
+          this.program = createProgram(
+            this.gl,
+            this.getRectVSHADER(),
+            this.getRectFSHADER(),
+          );
+          this.gl.useProgram(this.program);
+          var vertices = this.geometry.vertices;
+          var uvs = this.geometry.uvs;
+          this.color = new Color(
+            this === null || this === void 0
+              ? void 0
+              : (_this$material = this.material) === null ||
+                _this$material === void 0
+              ? void 0
+              : _this$material.color,
+          );
+          this.setUnifroms();
+          this.shaderAttributes.push(
+            bindAttriBuffer(this.gl, 'a_Position', vertices, 2, this.program),
+          );
+          this.shaderAttributes.push(
+            bindAttriBuffer(this.gl, 'a_TextCoord', uvs, 2, this.program),
+          );
+          this.gl.useProgram(null);
+        },
+        /**
+         * 设置当前着色器的 uniform 变量
+         */
+      },
+      {
+        key: 'setUnifroms',
+        value: function setUnifroms() {
+          var _this$material2, _this$material3;
+
+          this.projMatrix = this.camera.getPerspectiveMatrix();
+          bindUnifrom(
+            this.gl,
+            'u_projMatrix',
+            this.projMatrix,
+            this.program,
+            'mat4',
+          );
+          this.viewMatrix = this.camera.getViewMatrix();
+          bindUnifrom(
+            this.gl,
+            'u_viewMatrix',
+            this.viewMatrix,
+            this.program,
+            'mat4',
+          );
+          bindUnifrom(
+            this.gl,
+            'u_modelMatrix',
+            this.modelMatrix,
+            this.program,
+            'mat4',
+          );
+          bindUnifrom(
+            this.gl,
+            'u_opacity',
+            (this === null || this === void 0
+              ? void 0
+              : (_this$material2 = this.material) === null ||
+                _this$material2 === void 0
+              ? void 0
+              : _this$material2.opacity) !== undefined
+              ? this === null || this === void 0
+                ? void 0
+                : (_this$material3 = this.material) === null ||
+                  _this$material3 === void 0
+                ? void 0
+                : _this$material3.opacity
+              : 1.0,
+            this.program,
+            'float',
+          );
+          bindUnifrom(
+            this.gl,
+            'u_color',
+            this.color.getRGB(),
+            this.program,
+            'vec3',
+          ); // uniformName, data, vec
+        },
+        /**
+         * 返回顶点着色器代码
+         * @returns
+         */
+      },
+      {
+        key: 'getRectVSHADER',
+        value: function getRectVSHADER() {
+          return '\n            uniform mat4 u_projMatrix;\n            uniform mat4 u_viewMatrix;\n            uniform mat4 u_modelMatrix;\n\n            attribute vec4 a_Position;\n            attribute vec2 a_TextCoord;\n            varying vec2 v_uv;\n            void main(){\n                v_uv = a_TextCoord;\n\n                gl_Position = u_projMatrix * u_viewMatrix *  u_modelMatrix * a_Position;\n           \n            }\n        ';
+        },
+        /**
+         * 返回片元着色器代码
+         * @returns
+         */
+      },
+      {
+        key: 'getRectFSHADER',
+        value: function getRectFSHADER() {
+          var _this$material4,
+            _this2 = this;
+
+          var firstLine = 'precision mediump float;\n';
+          var gl_FragColorLine = 'gl_FragColor = vec4(u_color, u_opacity);\n';
+          var unifromLines = [
+            'uniform float u_opacity;\n',
+            'uniform vec3 u_color;',
+          ];
+
+          if (
+            this === null || this === void 0
+              ? void 0
+              : (_this$material4 = this.material) === null ||
+                _this$material4 === void 0
+              ? void 0
+              : _this$material4.map
+          ) {
+            var _this$material5;
+
+            this.imgLoading = true;
+            unifromLines.push('uniform sampler2D u_Sampler;\n'); // @ts-ignore
+
+            (_this$material5 = this.material) === null ||
+            _this$material5 === void 0
+              ? void 0
+              : _this$material5.on('loadImage', function(_ref) {
+                  var texture = _ref.texture,
+                    img = _ref.img;
+
+                  _this2.gl.useProgram(_this2.program); // TODO: cache texture
+
+                  _this2.texture = texture;
+
+                  _this2.gl.activeTexture(_this2.gl.TEXTURE0); // 激活0号纹理单元
+
+                  _this2.material.texture &&
+                    _this2.gl.bindTexture(_this2.gl.TEXTURE_2D, texture); // 绑定纹理单元
+
+                  var u_Sampler = _this2.gl.getUniformLocation(
+                    _this2.program,
+                    'u_Sampler',
+                  );
+
+                  _this2.gl.uniform1i(u_Sampler, 0);
+
+                  _this2.imgLoading = false;
+                  _this2.scene && _this2.scene.renderScene();
+                });
+            gl_FragColorLine = 'gl_FragColor = texture2D(u_Sampler, v_uv);\n';
+          } // TODO: 拼装 shader
+
+          var shader =
+            firstLine +
+            unifromLines.join('') +
+            '\n      varying vec2 v_uv;\n      void main(){\n        '.concat(
+              gl_FragColorLine,
+              '\n        gl_FragColor.a *= u_opacity;\n      }\n      ',
+            );
+          return shader;
+        },
+      },
+    ]);
+
+    return Mesh;
   })(Group);
 
   var GrayPass = /*#__PURE__*/ (function() {
@@ -2846,11 +3055,12 @@
   })();
 
   exports.BasicMaterial = BasicMaterial;
-  exports.Box = Box;
+  exports.BoxGeometry = BoxGeometry;
   exports.Camera = Camera;
   exports.Color = Color;
   exports.GrayPass = GrayPass;
-  exports.Plane = Plane;
+  exports.Mesh = Mesh;
+  exports.PlaneGeometry = PlaneGeometry;
   exports.Renderer = Renderer;
   exports.Scene = Scene;
 
