@@ -35,13 +35,13 @@ export default () => {
       material: mat1,
     });
 
-    scene.add(plane);
+    // scene.add(plane);
 
-    // let mesh = new SR.Mesh({
-    //   geometry: plane,
-    //   material: mat1,
-    // });
-    // scene.add(mesh);
+    let mesh = new SR.Mesh({
+      geometry: plane,
+      material: mat1,
+    });
+    scene.add(mesh);
 
     scene.renderScene();
 

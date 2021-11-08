@@ -31,7 +31,6 @@ export default class Mesh extends Group {
 
   constructor(props: IMeshProps) {
     super(props);
-    console.log(props);
     props.material !== undefined && (this.material = props.material);
     this.geometry = props.geometry;
   }
@@ -66,6 +65,15 @@ export default class Mesh extends Group {
     );
 
     this.gl.useProgram(null);
+  }
+
+  draw(camera: ICamera) {
+    console.log('draw1');
+    // TODO: 在纹理加载过程中或相机不存在时不渲染
+    if (this.imgLoading || !camera) return;
+
+    // TODO:  切换程序对象
+    this.gl.useProgram(this.program);
   }
 
   /**

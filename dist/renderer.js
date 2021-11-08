@@ -2755,7 +2755,6 @@
       _this.geometry = void 0;
       _this.shaderAttributes = [];
       _this.color = void 0;
-      console.log(props);
       props.material !== undefined && (_this.material = props.material);
       _this.geometry = props.geometry;
       return _this;
@@ -2795,6 +2794,16 @@
             bindAttriBuffer(this.gl, 'a_TextCoord', uvs, 2, this.program),
           );
           this.gl.useProgram(null);
+        },
+      },
+      {
+        key: 'draw',
+        value: function draw(camera) {
+          console.log('draw'); // TODO: 在纹理加载过程中或相机不存在时不渲染
+
+          if (this.imgLoading || !camera) return; // TODO:  切换程序对象
+
+          this.gl.useProgram(this.program);
         },
         /**
          * 设置当前着色器的 uniform 变量
