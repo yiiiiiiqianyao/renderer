@@ -32,6 +32,8 @@ export default () => {
       renderer,
     });
 
+    console.log('mat', mat1.on);
+
     let plane = new SR.PlaneGeometry({
       width: 1,
       height: 1,
@@ -64,6 +66,7 @@ export default () => {
 
       scene.renderScene();
     });
+
     // scene.setTranslete([1, 0, 0])
 
     // add test pass - webgl1

@@ -209,11 +209,11 @@ export default class PlaneGeometry extends Geometry {
 
     let unifromLines = ['uniform float u_opacity;\n', 'uniform vec3 u_color;'];
 
-    if (this?.material?.map) {
+    if (this.material?.map) {
       this.imgLoading = true;
       unifromLines.push('uniform sampler2D u_Sampler;\n');
-      // @ts-ignore
-      this.material?.on('loadImage', ({ texture, img }) => {
+
+      this.material.on('loadImage', ({ texture, img }) => {
         this.gl.useProgram(this.program);
 
         // TODO: cache texture

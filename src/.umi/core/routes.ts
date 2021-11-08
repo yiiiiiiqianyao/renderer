@@ -160,7 +160,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/mesh.md",
-          "updatedTime": 1636375440430,
+          "updatedTime": 1636376002000,
           "title": "mesh demo",
           "order": 1,
           "slugs": [

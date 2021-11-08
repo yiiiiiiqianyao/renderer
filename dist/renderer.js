@@ -1592,58 +1592,6 @@
     return Renderer;
   })();
 
-  var Object$1 = /*#__PURE__*/ (function() {
-    function Object() {
-      _classCallCheck(this, Object);
-
-      this.listeners = void 0;
-      this.gl = void 0;
-      this.program = void 0;
-      this.listeners = {};
-    }
-
-    _createClass(Object, [
-      {
-        key: 'on',
-        value: function on(name, fn) {
-          if (!this.listeners[name]) {
-            this.listeners[name] = [];
-          }
-
-          this.listeners[name].push(fn);
-        },
-      },
-      {
-        key: 'emit',
-        value: function emit(name, val) {
-          if (this.listeners[name]) {
-            this.listeners[name].map(function(fn) {
-              fn(val);
-            });
-          }
-        },
-      },
-      {
-        key: 'off',
-        value: function off(name, fn) {
-          if (this.listeners[name]) {
-            if (fn) {
-              var index = this.listeners[name].indexOf(fn);
-
-              if (index > -1) {
-                this.listeners[name].splice(index, 1);
-              }
-            } else {
-              this.listeners[name].length = 0; //设长度为0比obj[name] = []更优，因为如果是空数组则又开辟了一个新空间，设长度为0则不必开辟新空间
-            }
-          }
-        },
-      },
-    ]);
-
-    return Object;
-  })();
-
   // @ts-nocheck
   var useOffscreenCanvas = typeof OffscreenCanvas !== 'undefined';
   function isPowerOfTwo$1(image) {
@@ -1696,8 +1644,60 @@
     });
   }
 
-  var BasicMaterial = /*#__PURE__*/ (function(_Object) {
-    _inherits(BasicMaterial, _Object);
+  var Material = /*#__PURE__*/ (function() {
+    function Material() {
+      _classCallCheck(this, Material);
+
+      this.listeners = void 0;
+      this.gl = void 0;
+      this.program = void 0;
+      this.listeners = {};
+    }
+
+    _createClass(Material, [
+      {
+        key: 'on',
+        value: function on(name, fn) {
+          if (!this.listeners[name]) {
+            this.listeners[name] = [];
+          }
+
+          this.listeners[name].push(fn);
+        },
+      },
+      {
+        key: 'emit',
+        value: function emit(name, val) {
+          if (this.listeners[name]) {
+            this.listeners[name].map(function(fn) {
+              fn(val);
+            });
+          }
+        },
+      },
+      {
+        key: 'off',
+        value: function off(name, fn) {
+          if (this.listeners[name]) {
+            if (fn) {
+              var index = this.listeners[name].indexOf(fn);
+
+              if (index > -1) {
+                this.listeners[name].splice(index, 1);
+              }
+            } else {
+              this.listeners[name].length = 0; //设长度为0比obj[name] = []更优，因为如果是空数组则又开辟了一个新空间，设长度为0则不必开辟新空间
+            }
+          }
+        },
+      },
+    ]);
+
+    return Material;
+  })();
+
+  var BasicMaterial = /*#__PURE__*/ (function(_Material) {
+    _inherits(BasicMaterial, _Material);
 
     var _super = _createSuper(BasicMaterial);
 
@@ -1817,7 +1817,7 @@
     ]);
 
     return BasicMaterial;
-  })(Object$1);
+  })(Material);
 
   // @ts-nocheck
   function createProgram(gl, vshader, fshader) {
@@ -2491,44 +2491,36 @@
           ];
 
           if (
-            this === null || this === void 0
-              ? void 0
-              : (_this$material4 = this.material) === null ||
-                _this$material4 === void 0
+            (_this$material4 = this.material) === null ||
+            _this$material4 === void 0
               ? void 0
               : _this$material4.map
           ) {
-            var _this$material5;
-
             this.imgLoading = true;
-            unifromLines.push('uniform sampler2D u_Sampler;\n'); // @ts-ignore
+            unifromLines.push('uniform sampler2D u_Sampler;\n');
+            this.material.on('loadImage', function(_ref2) {
+              var texture = _ref2.texture,
+                img = _ref2.img;
 
-            (_this$material5 = this.material) === null ||
-            _this$material5 === void 0
-              ? void 0
-              : _this$material5.on('loadImage', function(_ref2) {
-                  var texture = _ref2.texture,
-                    img = _ref2.img;
+              _this3.gl.useProgram(_this3.program); // TODO: cache texture
 
-                  _this3.gl.useProgram(_this3.program); // TODO: cache texture
+              _this3.texture = texture;
 
-                  _this3.texture = texture;
+              _this3.gl.activeTexture(_this3.gl.TEXTURE0); // 激活0号纹理单元
 
-                  _this3.gl.activeTexture(_this3.gl.TEXTURE0); // 激活0号纹理单元
+              _this3.material.texture &&
+                _this3.gl.bindTexture(_this3.gl.TEXTURE_2D, texture); // 绑定纹理单元
 
-                  _this3.material.texture &&
-                    _this3.gl.bindTexture(_this3.gl.TEXTURE_2D, texture); // 绑定纹理单元
+              var u_Sampler = _this3.gl.getUniformLocation(
+                _this3.program,
+                'u_Sampler',
+              );
 
-                  var u_Sampler = _this3.gl.getUniformLocation(
-                    _this3.program,
-                    'u_Sampler',
-                  );
+              _this3.gl.uniform1i(u_Sampler, 0);
 
-                  _this3.gl.uniform1i(u_Sampler, 0);
-
-                  _this3.imgLoading = false;
-                  _this3.scene && _this3.scene.renderScene();
-                });
+              _this3.imgLoading = false;
+              _this3.scene && _this3.scene.renderScene();
+            });
             gl_FragColorLine = 'gl_FragColor = texture2D(u_Sampler, v_uv);\n';
           } // TODO: 拼装 shader
 
