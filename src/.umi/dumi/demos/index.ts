@@ -5,6 +5,7 @@ import rawCode1 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Th
 import rawCode2 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/blend.jsx?dumi-raw-code';
 import rawCode3 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/box.jsx?dumi-raw-code';
 import rawCode4 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/mesh.jsx?dumi-raw-code';
+import rawCode5 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simplePass.jsx?dumi-raw-code';
 
 export default {
   'docs-simple': {
@@ -22,5 +23,9 @@ export default {
   'docs-mesh': {
     component: (require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/mesh.jsx')).default,
     previewerProps: {"sources":{"_":{"jsx":rawCode4}},"dependencies":{"react":{"version":"16.14.0"},"@yiqianyao/renderer":{"version":"1.0.0"}},"identifier":"docs-mesh"},
+  },
+  'docs-simplepass': {
+    component: (require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simplePass.jsx')).default,
+    previewerProps: {"sources":{"_":{"jsx":rawCode5}},"dependencies":{"react":{"version":"16.14.0"},"@yiqianyao/renderer":{"version":"1.0.0"}},"identifier":"docs-simplepass"},
   },
 };

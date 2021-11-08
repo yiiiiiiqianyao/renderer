@@ -1,17 +1,11 @@
 import React from 'react';
-import * as SR from 'renderer';
-const Img = require('./assets/pkq.png');
+import * as SR from '@yiqianyao/renderer';
 
 export default () => {
   React.useEffect(() => {
     let renderer = new SR.Renderer({
       wrap: 'wrap',
       clearColor: new SR.Color([0, 0, 0, 1]),
-    });
-
-    let mat1 = new SR.BasicMaterial({
-      color: 'blue',
-      map: Img,
     });
 
     let camera = new SR.Camera({
@@ -26,17 +20,14 @@ export default () => {
       renderer,
     });
 
-    let plane = new SR.PlaneGeometry({
-      width: 1,
-      height: 1,
-      position: [-1, 0, 0],
-      rotation: [0, 0.3, 0],
-      material: mat1,
-    });
-    scene.add(plane);
-
     let box = new SR.BoxGeometry({});
-    scene.add(box);
+    let material = new SR.BoxMaterial({});
+
+    let mesh = new SR.Mesh({
+      geometry: box,
+      material,
+    });
+    scene.add(mesh);
 
     scene.renderScene();
 
@@ -56,14 +47,7 @@ export default () => {
     animate();
     function animate() {
       r += 0.01;
-      box && box.setRotate([0, r, 0]); // 通过设置网格角度来更新旋转角度
-      // plane2 && plane2.setRotate([r, 0, 0]); // 通过设置网格角度来更新旋转角度
-      // plane3 && plane3.rotate([0, 0.02, 0]); // 通过旋转网格来更新旋转角度
-
-      // scene.rotate([0, 0.01, 0]);
-      // plane && plane.setTranslete([-Math.sin(r)/2, 0, -Math.cos(r)/2])
-
-      // scene.setTranslete([Math.sin(r) * 1, 0, Math.cos(r) * 1]);
+      mesh && mesh.setRotate([0, r, 0]);
 
       scene.renderScene();
 

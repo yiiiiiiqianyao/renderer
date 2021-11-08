@@ -9,6 +9,7 @@ import {
   initBoxGeometryColors,
   initBoxGeometryIndices,
 } from '../utils/geoVertices';
+import { IMesh } from '../object/Mesh';
 export default class BoxGeometry extends Geometry {
   public type: string = 'CubeMesh';
 
@@ -24,6 +25,12 @@ export default class BoxGeometry extends Geometry {
 
     // 当前对象的 shader 变量参数列表
     this.shaderAttributes = [];
+
+    this.vertices = initBoxGeometryVertices();
+
+    this.colors = initBoxGeometryColors();
+
+    this.indices = initBoxGeometryIndices();
   }
 
   init(gl: WebGLRenderingContext, camera: ICamera) {
@@ -31,7 +38,7 @@ export default class BoxGeometry extends Geometry {
     this.camera = camera;
 
     this.cameraDistance = distance(camera.position, this.position);
-    this.material?.init(this.gl);
+    this.material?.init(this.gl, this.scene);
 
     this.program = glUtils.createProgram(
       this.gl,
@@ -40,29 +47,8 @@ export default class BoxGeometry extends Geometry {
     );
     this.gl.useProgram(this.program);
 
-    this.vertices = initBoxGeometryVertices();
-
-    this.colors = initBoxGeometryColors();
-
-    this.indices = initBoxGeometryIndices();
-
+    this.setAttributes(this.gl, this.program);
     this.setUnifroms();
-
-    this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(
-        this.gl,
-        'a_Position',
-        this.vertices,
-        3,
-        this.program,
-      ),
-    );
-
-    this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(this.gl, 'a_Color', this.colors, 3, this.program),
-    );
-
-    this.indicesBuffer = glUtils.bindAttriIndicesBuffer(this.gl, this.indices);
   }
 
   /**
@@ -70,6 +56,21 @@ export default class BoxGeometry extends Geometry {
    */
   setCamera(camera: ICamera) {
     this.camera = camera;
+  }
+
+  setAttributes(gl: WebGLRenderingContext, program: WebGLProgram) {
+    // console.log(this.vertices)
+    // console.log(this.colors)
+    // console.log(this.indices)
+    this.shaderAttributes.push(
+      glUtils.bindAttriBuffer(gl, 'a_Position', this.vertices, 3, program),
+    );
+
+    this.shaderAttributes.push(
+      glUtils.bindAttriBuffer(gl, 'a_Color', this.colors, 3, program),
+    );
+
+    this.indicesBuffer = glUtils.bindAttriIndicesBuffer(gl, this.indices);
   }
 
   /**
@@ -101,6 +102,13 @@ export default class BoxGeometry extends Geometry {
       this.program,
       'mat4',
     );
+
+    // TODO: 每次渲染的时候重新为纹理分配纹理空间
+    if (this.texture) {
+      this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+      var u_Sampler = this.gl.getUniformLocation(this.program, 'u_Sampler');
+      this.gl.uniform1i(u_Sampler, 0);
+    }
   }
 
   /**
@@ -123,22 +131,18 @@ export default class BoxGeometry extends Geometry {
       this.gl.vertexAttribPointer(attr, count, this.gl.FLOAT, false, 0, 0);
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
     });
+  }
 
-    // reBindUnifrom
-    this.setUnifroms();
-
-    // TODO: 每次渲染的时候重新为纹理分配纹理空间
-    if (this.texture) {
-      this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-      var u_Sampler = this.gl.getUniformLocation(this.program, 'u_Sampler');
-      this.gl.uniform1i(u_Sampler, 0);
-    }
+  drawCommand({ gl, geometry }) {
+    gl.drawElements(gl.TRIANGLES, geometry.indices.length, gl.UNSIGNED_BYTE, 0);
   }
 
   /**
    * 绘制当前的网格对象
    */
   draw(camera: ICamera) {
+    if (this.imgLoading || !camera) return;
+
     // TODO:  切换程序对象
     this.gl.useProgram(this.program);
 
@@ -148,13 +152,11 @@ export default class BoxGeometry extends Geometry {
     // update unifrom
     this.updateAttributeUnifroms();
 
+    // reBindUnifrom
+    this.setUnifroms();
+
     // this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
-    this.gl.drawElements(
-      this.gl.TRIANGLES,
-      this.indices.length,
-      this.gl.UNSIGNED_BYTE,
-      0,
-    );
+    this.drawCommand({ gl: this.gl, geometry: this });
   }
 
   /**

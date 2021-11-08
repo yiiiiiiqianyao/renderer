@@ -1,6 +1,9 @@
+import { IScene } from '../scene';
+
 export interface IMaterial {
   gl: WebGLRenderingContext;
   program: WebGLProgram;
+  scene: IScene;
 
   on: (name: string, fn: (options: any) => any) => void;
   emit: (name: string, val: any) => void;

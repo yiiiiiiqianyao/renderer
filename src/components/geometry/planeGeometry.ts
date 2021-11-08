@@ -9,11 +9,12 @@ import {
   initPlaneGeometryVertices,
   initPlaneGeometryUvs,
 } from '../utils/geoVertices';
+import { IMesh } from '../object/Mesh';
 export default class PlaneGeometry extends Geometry {
   public type: string = 'PlaneMesh';
   public scene: IScene;
   public camera: ICamera;
-  public color: IColor;
+  public color: IColor | null;
 
   public material: IMaterial = new BasicMaterial({});
   public width: number = 1;
@@ -34,14 +35,21 @@ export default class PlaneGeometry extends Geometry {
 
     // 当前对象的 shader 变量参数列表
     this.shaderAttributes = [];
+
+    this.vertices = initPlaneGeometryVertices(this.width, this.height);
+
+    this.uvs = initPlaneGeometryUvs();
+
+    this.color = this.material.color;
   }
 
-  init(gl: WebGLRenderingContext, camera: ICamera) {
+  init(gl: WebGLRenderingContext, camera: ICamera, scene: IScene) {
     this.gl = gl;
     this.camera = camera;
+    this.scene = scene;
 
     this.cameraDistance = distance(camera.position, this.position);
-    this.material.init(this.gl);
+    this.material.init(this.gl, this.scene);
 
     this.program = glUtils.createProgram(
       this.gl,
@@ -50,32 +58,8 @@ export default class PlaneGeometry extends Geometry {
     );
     this.gl.useProgram(this.program);
 
-    this.vertices = initPlaneGeometryVertices(this.width, this.height);
-
-    this.uvs = initPlaneGeometryUvs();
-
-    this.color = new Color(this?.material?.color);
-
+    this.setAttributes(this.gl, this.program);
     this.setUnifroms();
-
-    this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(
-        this.gl,
-        'a_Position',
-        this.vertices,
-        2,
-        this.program,
-      ),
-    );
-    this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(
-        this.gl,
-        'a_TextCoord',
-        this.uvs,
-        2,
-        this.program,
-      ),
-    );
 
     this.gl.useProgram(null);
   }
@@ -85,6 +69,18 @@ export default class PlaneGeometry extends Geometry {
    */
   setCamera(camera: ICamera) {
     this.camera = camera;
+  }
+
+  setAttributes(gl: WebGLRenderingContext, program: WebGLProgram) {
+    let vertices = this.vertices;
+    let uvs = this.uvs;
+
+    this.shaderAttributes.push(
+      glUtils.bindAttriBuffer(gl, 'a_Position', vertices, 2, program),
+    );
+    this.shaderAttributes.push(
+      glUtils.bindAttriBuffer(gl, 'a_TextCoord', uvs, 2, program),
+    );
   }
 
   /**
@@ -125,30 +121,15 @@ export default class PlaneGeometry extends Geometry {
       'float',
     );
 
-    glUtils.bindUnifrom(
-      this.gl,
-      'u_color',
-      this.color.getRGB(),
-      this.program,
-      'vec3',
-    );
-
-    // uniformName, data, vec
-  }
-
-  /**
-   * 更新 shader 的 attribute/uniform 变量的值
-   */
-  updateAttributeUnifroms() {
-    // reBindBuffer
-    this.shaderAttributes.map(({ buffer, attr, count }) => {
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer); // 将缓冲区对象绑定到目标
-      this.gl.vertexAttribPointer(attr, count, this.gl.FLOAT, false, 0, 0);
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
-    });
-
-    // reBindUnifrom
-    this.setUnifroms();
+    if (this.color) {
+      glUtils.bindUnifrom(
+        this.gl,
+        'u_color',
+        this.color.getRGB(),
+        this.program,
+        'vec3',
+      );
+    }
 
     // TODO: 每次渲染的时候重新为纹理分配纹理空间
     if (this.texture) {
@@ -156,6 +137,12 @@ export default class PlaneGeometry extends Geometry {
       var u_Sampler = this.gl.getUniformLocation(this.program, 'u_Sampler');
       this.gl.uniform1i(u_Sampler, 0);
     }
+
+    // uniformName, data, vec
+  }
+
+  drawCommand({ gl }: IMesh) {
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
   /**
@@ -172,8 +159,12 @@ export default class PlaneGeometry extends Geometry {
     this.setCamera(camera);
 
     // update unifrom
-    this.updateAttributeUnifroms();
+    this.updateAttribute(this.gl);
 
+    // reBindUnifrom
+    this.setUnifroms();
+
+    // this.drawCommand()
     this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
   }
 

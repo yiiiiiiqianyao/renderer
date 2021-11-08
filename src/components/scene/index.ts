@@ -32,7 +32,7 @@ export default class Scene extends Group implements IScene {
    * @param {*} mesh
    */
   add(mesh) {
-    mesh.init(this.gl, this.camera);
+    mesh.init(this.gl, this.camera, this);
 
     // TODO: 判断当前对象的子节点中不存在 mesh
     if (!this.hasChildren(mesh)) {

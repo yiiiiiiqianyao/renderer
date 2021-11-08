@@ -7,16 +7,17 @@ export default () => {
   React.useEffect(() => {
     let renderer = new SR.Renderer({
       wrap: 'wrap',
-      clearColor: new SR.Color([0, 0, 0, 1]),
+      clearColor: new SR.Color([1, 0, 0, 1]),
     });
 
     let mat1 = new SR.BasicMaterial({
-      color: 'green',
+      color: 'blue',
+      map: Img,
     });
 
     let mat2 = new SR.BasicMaterial({
-      transparent: true,
-      opacity: 0.6,
+      color: 'blue',
+      map: Img4,
     });
 
     let mat3 = new SR.BasicMaterial({
@@ -26,8 +27,8 @@ export default () => {
     });
 
     let camera = new SR.Camera({
-      target: [0, 0, 0],
-      position: [0, 1, 5],
+      target: [2, 1, 0],
+      position: [5, 2, 5],
       aspect: renderer.renderPixelWidth / renderer.renderPixelHeight,
     });
 
@@ -40,33 +41,27 @@ export default () => {
     let plane = new SR.PlaneGeometry({
       width: 1,
       height: 1,
-      position: [0, 0, 0],
-      rotation: [0, 0, 0],
+      position: [-1, 0, 0],
+      rotation: [0, 0.3, 0],
       material: mat1,
     });
 
     let plane2 = new SR.PlaneGeometry({
       width: 0.5,
       height: 0.5,
-      position: [0, 0, 1],
+      position: [-0.3, 0, 2],
       material: mat2,
     });
 
     let plane3 = new SR.PlaneGeometry({
-      height: 0.5,
-      position: [0, 0, 2],
-      rotation: [0, 0, 0],
+      position: [1, 0, 0.4],
+      rotation: [Math.PI / 2, 0, 0],
       material: mat3,
     });
 
     scene.add(plane);
-
-    // renderer.gl.depthMask(false);
-
-    scene.add(plane3);
     scene.add(plane2);
-
-    // renderer.gl.depthMask(true);
+    scene.add(plane3);
 
     scene.renderScene();
 
@@ -76,6 +71,12 @@ export default () => {
 
       scene.renderScene();
     });
+
+    // scene.setTranslete([1, 0, 0])
+
+    // add test pass - webgl1
+    const grayPass = new SR.GrayPass({});
+    scene.addPass(grayPass);
 
     let r = 0;
     animate();

@@ -2799,7 +2799,7 @@
       {
         key: 'draw',
         value: function draw(camera) {
-          console.log('draw'); // TODO: 在纹理加载过程中或相机不存在时不渲染
+          console.log('draw2'); // TODO: 在纹理加载过程中或相机不存在时不渲染
 
           if (this.imgLoading || !camera) return; // TODO:  切换程序对象
 

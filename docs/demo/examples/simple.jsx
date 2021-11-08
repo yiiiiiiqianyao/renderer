@@ -1,5 +1,5 @@
 import React from 'react';
-import * as SR from 'renderer';
+import * as SR from '@yiqianyao/renderer';
 const Img = require('./assets/pkq.png');
 const Img4 = require('./assets/img1.jpg');
 
@@ -20,6 +20,12 @@ export default () => {
       map: Img4,
     });
 
+    let mat3 = new SR.BasicMaterial({
+      color: 'blue',
+      transparent: true,
+      opacity: 0.6,
+    });
+
     let camera = new SR.Camera({
       target: [2, 1, 0],
       position: [5, 2, 5],
@@ -31,8 +37,6 @@ export default () => {
       camera,
       renderer,
     });
-
-    console.log('mat', mat1.on);
 
     let plane = new SR.PlaneGeometry({
       width: 1,
@@ -52,6 +56,7 @@ export default () => {
     let plane3 = new SR.PlaneGeometry({
       position: [1, 0, 0.4],
       rotation: [Math.PI / 2, 0, 0],
+      material: mat3,
     });
 
     scene.add(plane);

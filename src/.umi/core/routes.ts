@@ -71,34 +71,6 @@ export function getRoutes() {
         "title": "API - renderer"
       },
       {
-        "path": "/demo/base",
-        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/base.zh.md').default,
-        "exact": true,
-        "meta": {
-          "filePath": "docs/demo/base.zh.md",
-          "updatedTime": 1635869128000,
-          "title": "simple demo",
-          "order": 1,
-          "slugs": [
-            {
-              "depth": 1,
-              "value": "标准地图",
-              "heading": "标准地图"
-            },
-            {
-              "depth": 2,
-              "value": "simple demo",
-              "heading": "simple-demo"
-            }
-          ],
-          "group": {
-            "path": "/demo",
-            "title": "Demo"
-          }
-        },
-        "title": "simple demo - renderer"
-      },
-      {
         "path": "/demo/blend",
         "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/blend.zh.md').default,
         "exact": true,
@@ -115,8 +87,8 @@ export function getRoutes() {
             },
             {
               "depth": 2,
-              "value": "simple demo",
-              "heading": "simple-demo"
+              "value": "blend demo",
+              "heading": "blend-demo"
             }
           ],
           "group": {
@@ -143,8 +115,8 @@ export function getRoutes() {
             },
             {
               "depth": 2,
-              "value": "simple demo",
-              "heading": "simple-demo"
+              "value": "box demo",
+              "heading": "box-demo"
             }
           ],
           "group": {
@@ -171,8 +143,8 @@ export function getRoutes() {
             },
             {
               "depth": 2,
-              "value": "mesh demo",
-              "heading": "mesh-demo"
+              "value": "mesh plane demo",
+              "heading": "mesh-plane-demo"
             }
           ],
           "group": {
@@ -183,10 +155,66 @@ export function getRoutes() {
         "title": "mesh demo - renderer"
       },
       {
+        "path": "/demo/simple",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/simple.zh.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/simple.zh.md",
+          "updatedTime": 1636390634312,
+          "title": "simple demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "标准地图",
+              "heading": "标准地图"
+            },
+            {
+              "depth": 2,
+              "value": "simple demo",
+              "heading": "simple-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "simple demo - renderer"
+      },
+      {
+        "path": "/demo/simple-pass",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/simplePass.zh.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/simplePass.zh.md",
+          "updatedTime": 1636390544535,
+          "title": "simple pass demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "标准地图",
+              "heading": "标准地图"
+            },
+            {
+              "depth": 2,
+              "value": "simple pass demo",
+              "heading": "simple-pass-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "simple pass demo - renderer"
+      },
+      {
         "path": "/demo",
         "meta": {},
         "exact": true,
-        "redirect": "/demo/base"
+        "redirect": "/demo/blend"
       }
     ],
     "title": "renderer",

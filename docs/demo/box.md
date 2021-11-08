@@ -5,6 +5,6 @@ order: 1
 
 # 标准地图
 
-## simple demo
+## box demo
 
 <code src="./examples/box.jsx">

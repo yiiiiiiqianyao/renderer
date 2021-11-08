@@ -145,12 +145,15 @@ export function initBoxGeometryColors() {
     1.0,
     1.0,
     1.0, // v0 front
+
     1.0,
     1.0,
     1.0, // v1
+
     1.0,
     1.0,
     1.0, // v2
+
     1.0,
     1.0,
     1.0, // v3
@@ -158,12 +161,15 @@ export function initBoxGeometryColors() {
     0.0,
     1.0,
     1.0, // v4 back
+
     0.0,
     1.0,
     1.0, // v5
+
     0.0,
     1.0,
     1.0, // v6
+
     0.0,
     1.0,
     1.0, // v7
@@ -171,12 +177,15 @@ export function initBoxGeometryColors() {
     1.0,
     1.0,
     0.0, // v8 right
+
     1.0,
     1.0,
     0.0, // v9
+
     1.0,
     1.0,
     0.0, // v10
+
     1.0,
     1.0,
     0.0, // v11
@@ -184,12 +193,15 @@ export function initBoxGeometryColors() {
     1.0,
     0.0,
     0.0, // v12 top
+
     1.0,
     0.0,
     0.0, // v3
+
     1.0,
     0.0,
     0.0, // v14
+
     1.0,
     0.0,
     0.0, // v15
@@ -197,12 +209,15 @@ export function initBoxGeometryColors() {
     0.0,
     1.0,
     0.0, // v16 down
+
     0.0,
     1.0,
     0.0, // v17
+
     0.0,
     1.0,
     0.0, // v18
+
     0.0,
     1.0,
     0.0, // v19
@@ -210,12 +225,15 @@ export function initBoxGeometryColors() {
     0.0,
     0.0,
     1.0, // v1 left
+
     0.0,
     0.0,
     1.0, // v6
+
     0.0,
     0.0,
     1.0, // v7
+
     0.0,
     0.0,
     1.0, // v2

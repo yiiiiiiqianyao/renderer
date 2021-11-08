@@ -10,12 +10,16 @@ import { Point } from '@/utils/interface';
 import BasicMaterial, { IMaterial } from '../material/BasicMaterial';
 import Color, { IColor } from '../object/Color';
 
+export interface IMesh {
+  gl: WebGLRenderingContext;
+  geometry: IGeometry;
+}
 interface IMeshProps {
   geometry: IGeometry;
   material: IMaterial;
 }
 
-export default class Mesh extends Group {
+export default class Mesh extends Group implements IMesh {
   public scene: IScene;
   public camera: ICamera;
 
@@ -35,45 +39,52 @@ export default class Mesh extends Group {
     this.geometry = props.geometry;
   }
 
-  init(gl: WebGLRenderingContext, camera: ICamera) {
+  init(gl: WebGLRenderingContext, camera: ICamera, scene: IScene) {
     this.gl = gl;
     this.camera = camera;
+    this.scene = scene;
 
     this.cameraDistance = distance(camera.position, this.position);
-    this.material.init(this.gl);
+    this.material.init(this.gl, this.scene);
 
     this.program = glUtils.createProgram(
       this.gl,
-      this.getRectVSHADER(),
-      this.getRectFSHADER(),
+      this.material.getVShader(),
+      this.material.getFShader(),
     );
     this.gl.useProgram(this.program);
 
-    let vertices = this.geometry.vertices;
-
-    let uvs = this.geometry.uvs;
-
-    this.color = new Color(this?.material?.color);
-
     this.setUnifroms();
 
-    this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(this.gl, 'a_Position', vertices, 2, this.program),
-    );
-    this.shaderAttributes.push(
-      glUtils.bindAttriBuffer(this.gl, 'a_TextCoord', uvs, 2, this.program),
-    );
+    this.geometry.setAttributes(this.gl, this.program);
 
     this.gl.useProgram(null);
   }
 
   draw(camera: ICamera) {
-    console.log('draw1');
     // TODO: 在纹理加载过程中或相机不存在时不渲染
-    if (this.imgLoading || !camera) return;
+    if (this.material.imgLoading || !camera) return;
 
     // TODO:  切换程序对象
     this.gl.useProgram(this.program);
+
+    // TODO: reset camera
+    this.setCamera(camera);
+
+    // update unifrom
+    this.geometry.updateAttribute(this.gl);
+
+    // reBindUnifrom
+    this.setUnifroms();
+
+    this.geometry.drawCommand(this);
+  }
+
+  /**
+   * @param camera
+   */
+  setCamera(camera: ICamera) {
+    this.camera = camera;
   }
 
   /**
@@ -114,13 +125,15 @@ export default class Mesh extends Group {
       'float',
     );
 
-    glUtils.bindUnifrom(
-      this.gl,
-      'u_color',
-      this.color.getRGB(),
-      this.program,
-      'vec3',
-    );
+    if (this.material.color) {
+      glUtils.bindUnifrom(
+        this.gl,
+        'u_color',
+        this.material.color.getRGB(),
+        this.program,
+        'vec3',
+      );
+    }
 
     // uniformName, data, vec
   }

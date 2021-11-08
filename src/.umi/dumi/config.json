@@ -15,13 +15,6 @@
           "meta": {},
           "children": [
             {
-              "path": "/demo/base",
-              "title": "simple demo",
-              "meta": {
-                "order": 1
-              }
-            },
-            {
               "path": "/demo/blend",
               "title": "blend demo",
               "meta": {
@@ -38,6 +31,20 @@
             {
               "path": "/demo/mesh",
               "title": "mesh demo",
+              "meta": {
+                "order": 1
+              }
+            },
+            {
+              "path": "/demo/simple",
+              "title": "simple demo",
+              "meta": {
+                "order": 1
+              }
+            },
+            {
+              "path": "/demo/simple-pass",
+              "title": "simple pass demo",
               "meta": {
                 "order": 1
               }
