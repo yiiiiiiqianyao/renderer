@@ -198,9 +198,18 @@ var Scene = /*#__PURE__*/ (function(_Group) {
         var transparentMeshes = []; // 透明 mesh
 
         this.children.forEach(function(mesh) {
+          var _mesh$material;
+
           mesh.cameraDistance = distance(mesh.position, _this2.camera.position);
 
-          if (mesh.material.transparent) {
+          if (
+            mesh === null || mesh === void 0
+              ? void 0
+              : (_mesh$material = mesh.material) === null ||
+                _mesh$material === void 0
+              ? void 0
+              : _mesh$material.transparent
+          ) {
             transparentMeshes.push(mesh);
           } else {
             unTransparentMeshes.push(mesh);

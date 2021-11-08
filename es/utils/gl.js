@@ -84,6 +84,17 @@ export function bindAttriBuffer(gl, attrName, vertices, count, program) {
     count: count,
   };
 }
+export function bindAttriIndicesBuffer(gl, indices) {
+  var buffer = gl.createBuffer();
+
+  if (!buffer) {
+    console.log('failed create vertex buffer');
+  }
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+  return buffer;
+}
 export function bindUnifrom(gl, unifromName, data, program, vec) {
   var uniform = gl.getUniformLocation(program, unifromName);
 

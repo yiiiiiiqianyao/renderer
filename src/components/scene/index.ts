@@ -71,7 +71,7 @@ export default class Scene extends Group implements IScene {
     this.children.forEach(mesh => {
       mesh.cameraDistance = distance(mesh.position, this.camera.position);
 
-      if (mesh.material.transparent) {
+      if (mesh?.material?.transparent) {
         transparentMeshes.push(mesh);
       } else {
         unTransparentMeshes.push(mesh);

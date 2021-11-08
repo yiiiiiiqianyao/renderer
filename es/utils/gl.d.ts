@@ -1,16 +1,24 @@
 export declare function createProgram(gl: any, vshader: any, fshader: any): any;
-export declare function loadShader(gl: any, type: any, source: any): any;
+export declare function loadShader(
+  gl: WebGLRenderingContext,
+  type: any,
+  source: any,
+): WebGLShader | null;
 export declare function bindAttriBuffer(
-  gl: any,
-  attrName: any,
+  gl: WebGLRenderingContext,
+  attrName: string,
   vertices: any,
   count: any,
   program: any,
 ): {
-  buffer: any;
-  attr: any;
+  buffer: WebGLBuffer | null;
+  attr: number;
   count: any;
 };
+export declare function bindAttriIndicesBuffer(
+  gl: WebGLRenderingContext,
+  indices: Uint8Array,
+): WebGLBuffer;
 export declare function bindUnifrom(
   gl: any,
   unifromName: any,

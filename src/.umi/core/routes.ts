@@ -127,6 +127,34 @@ export function getRoutes() {
         "title": "blend demo - renderer"
       },
       {
+        "path": "/demo/box",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/box.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/box.md",
+          "updatedTime": 1636362698460,
+          "title": "cube demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "标准地图",
+              "heading": "标准地图"
+            },
+            {
+              "depth": 2,
+              "value": "simple demo",
+              "heading": "simple-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "cube demo - renderer"
+      },
+      {
         "path": "/demo",
         "meta": {},
         "exact": true,

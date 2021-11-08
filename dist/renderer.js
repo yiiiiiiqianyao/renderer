@@ -1189,12 +1189,21 @@
           var transparentMeshes = []; // 透明 mesh
 
           this.children.forEach(function(mesh) {
+            var _mesh$material;
+
             mesh.cameraDistance = distance(
               mesh.position,
               _this2.camera.position,
             );
 
-            if (mesh.material.transparent) {
+            if (
+              mesh === null || mesh === void 0
+                ? void 0
+                : (_mesh$material = mesh.material) === null ||
+                  _mesh$material === void 0
+                ? void 0
+                : _mesh$material.transparent
+            ) {
               transparentMeshes.push(mesh);
             } else {
               unTransparentMeshes.push(mesh);
@@ -1243,188 +1252,134 @@
     return Scene;
   })(Group);
 
-  // @ts-nocheck
-  function createProgram(gl, vshader, fshader) {
-    // Create shader object
-    var vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader); // 创建顶点着色器对象
+  /**
+   * 视图
+   */
 
-    var fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader); // 创建片元着色器对象
+  var ViewPort = /*#__PURE__*/ (function() {
+    function ViewPort(props) {
+      _classCallCheck(this, ViewPort);
 
-    if (!vertexShader || !fragmentShader) {
-      return null;
-    } // Create a program object
-
-    var program = gl.createProgram(); // 创建程序对象
-
-    if (!program) {
-      return null;
-    } // Attach the shader objects
-
-    gl.attachShader(program, vertexShader); // 绑定着色器对象
-
-    gl.attachShader(program, fragmentShader); // Link the program object
-
-    gl.linkProgram(program); // 链接着色器对象
-    // Check the result of linking
-
-    var linked = gl.getProgramParameter(program, gl.LINK_STATUS); // 判断着色器对象是否链接成功
-
-    if (!linked) {
-      var error = gl.getProgramInfoLog(program);
-      console.log('Failed to link program: ' + error);
-      gl.deleteProgram(program);
-      gl.deleteShader(fragmentShader);
-      gl.deleteShader(vertexShader);
-      return null;
+      this.eye = (props === null || props === void 0 ? void 0 : props.eye) || [
+        1,
+        1,
+        1,
+      ];
+      this.target = (props === null || props === void 0
+        ? void 0
+        : props.target) || [0, 0, 0];
+      this.up = (props === null || props === void 0 ? void 0 : props.up) || [
+        0,
+        1,
+        0,
+      ];
+      this.viewMatrix = create();
+      this.initViewMatrix();
     }
 
-    return program;
-  }
-  function loadShader(gl, type, source) {
-    // Create shader object
-    var shader = gl.createShader(type); // 生成着色器对象
+    _createClass(ViewPort, [
+      {
+        key: 'initViewMatrix',
+        value: function initViewMatrix() {
+          lookAt(this.viewMatrix, this.eye, this.target, this.up);
+        },
+      },
+      {
+        key: 'getViewMatrix',
+        value: function getViewMatrix() {
+          return this.viewMatrix;
+        },
+      },
+    ]);
 
-    if (shader == null) {
-      console.log('unable to create shader');
-      return null;
-    } // Set the shader program
+    return ViewPort;
+  })();
 
-    gl.shaderSource(shader, source); // 载入着色器
-    // Compile the shader
+  var Camera = /*#__PURE__*/ (function() {
+    function Camera(props) {
+      _classCallCheck(this, Camera);
 
-    gl.compileShader(shader); // 编译着色器代码
-    // Check the result of compilation
+      this.position = void 0;
+      this.aspect = void 0;
+      this.fov =
+        (props === null || props === void 0 ? void 0 : props.fov) || 40;
+      this.aspect =
+        (props === null || props === void 0 ? void 0 : props.aspect) || 1; // this.aspect =  1;
 
-    var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS); // 判断着色器对象是否生成成功
-    // gl.SHADER_TYPE、gl.DELETE_STATUS、gl.COMPILE_STATUS
+      this.near =
+        (props === null || props === void 0 ? void 0 : props.near) || 0.01;
+      this.far =
+        (props === null || props === void 0 ? void 0 : props.far) || 100;
+      this.position = (props === null || props === void 0
+        ? void 0
+        : props.position) || [1, 1, 1];
+      this.target = (props === null || props === void 0
+        ? void 0
+        : props.target) || [0, 0, 0];
+      this.up = (props === null || props === void 0 ? void 0 : props.up) || [
+        0,
+        1,
+        0,
+      ];
+      this.viewPort = new ViewPort({
+        eye: this.position,
+        target: this.target,
+        up: this.up,
+      }); // 初始化透视矩阵
 
-    if (!compiled) {
-      var error = gl.getShaderInfoLog(shader);
-      console.log('Failed to compile shader: ' + error);
-      gl.deleteShader(shader);
-      return null;
+      this.initPerspectiveMatrix();
     }
+    /**
+     * 初始化透视矩阵
+     */
 
-    return shader;
-  }
-  function bindAttriBuffer(gl, attrName, vertices, count, program) {
-    var buffer = gl.createBuffer();
+    _createClass(Camera, [
+      {
+        key: 'initPerspectiveMatrix',
+        value: function initPerspectiveMatrix() {
+          this.perspectiveMatrix = create();
+          perspective(
+            this.perspectiveMatrix,
+            (this.fov * Math.PI) / 180,
+            this.aspect,
+            this.near,
+            this.far,
+          );
+        },
+      },
+      {
+        key: 'resize',
+        value: function resize(width, height) {
+          this.aspect = width / height; // console.log('this.aspect', this.aspect)
 
-    if (!buffer) {
-      console.log('failed create vertex buffer');
-    }
+          this.updatePerspectiveMatrix();
+        },
+        /**
+         * 更新透视矩阵
+         */
+      },
+      {
+        key: 'updatePerspectiveMatrix',
+        value: function updatePerspectiveMatrix() {
+          this.initPerspectiveMatrix();
+        },
+      },
+      {
+        key: 'getPerspectiveMatrix',
+        value: function getPerspectiveMatrix() {
+          return this.perspectiveMatrix;
+        },
+      },
+      {
+        key: 'getViewMatrix',
+        value: function getViewMatrix() {
+          return this.viewPort.getViewMatrix();
+        },
+      },
+    ]);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // 将缓冲区对象绑定到目标
-
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW); // 向缓冲区对象中写入数据
-
-    var attr = gl.getAttribLocation(program, attrName);
-    gl.vertexAttribPointer(attr, count, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(attr);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    return {
-      buffer: buffer,
-      attr: attr,
-      count: count,
-    };
-  }
-  function bindUnifrom(gl, unifromName, data, program, vec) {
-    var uniform = gl.getUniformLocation(program, unifromName);
-
-    if (uniform < 0) {
-      console.log('无法获取 uniform 变量的存储位置');
-    }
-
-    setUnifrom(gl, uniform, data, vec);
-    return uniform;
-  }
-  function setUnifrom(gl, location, data, vec) {
-    switch (vec) {
-      case 'float':
-        gl.uniform1f(location, data);
-        break;
-
-      case 'vec2':
-        gl.uniform2fv(location, data);
-        break;
-
-      case 'vec3':
-        gl.uniform3fv(location, data);
-        break;
-
-      case 'vec4':
-        gl.uniform4fv(location, data);
-        break;
-
-      case 'bool':
-        gl.uniform1i(location, data); // 1 - true    0 - false
-
-        break;
-
-      case 'sampler2d':
-        break;
-
-      case 'mat4':
-        gl.uniformMatrix4fv(location, false, data);
-        break;
-    }
-  }
-  function initFramebuffer(gl) {
-    var drawingBufferWidth = gl.drawingBufferWidth,
-      drawingBufferHeight = gl.drawingBufferHeight; // floorPowerOfTwo(OFFER_SCREEN_WIDTH)
-    // console.log(floorPowerOfTwo(OFFER_SCREEN_WIDTH), floorPowerOfTwo(OFFER_SCREEN_HEIGHT))
-
-    var OFFER_SCREEN_WIDTH = floorPowerOfTwo(drawingBufferWidth);
-    var OFFER_SCREEN_HEIGHT = floorPowerOfTwo(drawingBufferHeight);
-    var FRAMEBUFFER = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, FRAMEBUFFER);
-    var depthbuffer = gl.createRenderbuffer();
-    gl.bindRenderbuffer(gl.RENDERBUFFER, depthbuffer);
-    gl.renderbufferStorage(
-      gl.RENDERBUFFER,
-      gl.DEPTH_COMPONENT16,
-      OFFER_SCREEN_WIDTH,
-      OFFER_SCREEN_HEIGHT,
-    );
-    gl.framebufferRenderbuffer(
-      gl.FRAMEBUFFER,
-      gl.DEPTH_ATTACHMENT,
-      gl.RENDERBUFFER,
-      depthbuffer,
-    );
-    var texture = gl.createTexture();
-    FRAMEBUFFER.texture = texture;
-    FRAMEBUFFER.width = OFFER_SCREEN_WIDTH;
-    FRAMEBUFFER.height = OFFER_SCREEN_HEIGHT;
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      gl.RGBA,
-      OFFER_SCREEN_WIDTH,
-      OFFER_SCREEN_HEIGHT,
-      0,
-      gl.RGBA,
-      gl.UNSIGNED_BYTE,
-      null,
-    );
-    gl.framebufferTexture2D(
-      gl.FRAMEBUFFER,
-      gl.COLOR_ATTACHMENT0,
-      gl.TEXTURE_2D,
-      texture,
-      0,
-    );
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    return {
-      FRAMEBUFFER: FRAMEBUFFER,
-      OFFER_SCREEN_WIDTH: OFFER_SCREEN_WIDTH,
-      OFFER_SCREEN_HEIGHT: OFFER_SCREEN_HEIGHT,
-    };
-  }
+    return Camera;
+  })();
 
   var Color = /*#__PURE__*/ (function() {
     function Color(props) {
@@ -1537,6 +1492,104 @@
       return false;
     }
   };
+
+  var getCanvas = function getCanvas(width, height) {
+    var canvas = document.createElement('canvas');
+    setCanvas(canvas, width, height);
+    return canvas;
+  };
+  var setCanvas = function setCanvas(canvas, width, height) {
+    canvas.width = width * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+  };
+
+  var Renderer = /*#__PURE__*/ (function() {
+    function Renderer(props) {
+      _classCallCheck(this, Renderer);
+
+      this.gl = void 0;
+      this.wrap = void 0;
+      this.clearColor = void 0;
+      this.canvas = void 0;
+      this.renderPixelWidth = void 0;
+      this.renderPixelHeight = void 0;
+      this.clearColor = new Color(props.clearColor);
+      this.initRenderContext(props.wrap);
+      this.renderPixelSize();
+    }
+
+    _createClass(Renderer, [
+      {
+        key: 'initRenderContext',
+        value: function initRenderContext(wrap) {
+          if (typeof wrap === 'string') {
+            this.wrap = document.getElementById('wrap');
+            var _this$wrap = this.wrap,
+              clientWidth = _this$wrap.clientWidth,
+              clientHeight = _this$wrap.clientHeight;
+            this.canvas = getCanvas(clientWidth, clientHeight);
+          } else if (wrap instanceof HTMLCanvasElement) {
+            this.wrap = wrap.parentNode;
+            this.canvas = wrap;
+          } else {
+            this.wrap = wrap;
+            var _this$wrap2 = this.wrap,
+              _clientWidth = _this$wrap2.clientWidth,
+              _clientHeight = _this$wrap2.clientHeight;
+            this.canvas = getCanvas(_clientWidth, _clientHeight);
+          }
+
+          this.wrap.appendChild(this.canvas);
+          this.gl = this.canvas.getContext('webgl');
+          this.initGLParams(this.gl);
+        },
+      },
+      {
+        key: 'initGLParams',
+        value: function initGLParams(gl) {
+          var c = this.clearColor.getRGBA();
+          gl.clearColor(c[0], c[1], c[2], c[3]);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.enable(gl.DEPTH_TEST); // 开启深度检测
+
+          gl.clear(gl.DEPTH_BUFFER_BIT); // 清除深度缓存
+
+          gl.enable(gl.BLEND); // 开启混合
+
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // 指定混合函数
+
+          gl.enable(gl.CULL_FACE); // 开启背面剔除
+
+          gl.disable(gl.CULL_FACE); // 关闭背面剔除
+        },
+      },
+      {
+        key: 'renderPixelSize',
+        value: function renderPixelSize() {
+          var _this$canvas = this.canvas,
+            clientWidth = _this$canvas.clientWidth,
+            clientHeight = _this$canvas.clientHeight;
+          this.renderPixelWidth = clientWidth;
+          this.renderPixelHeight = clientHeight;
+        },
+      },
+      {
+        key: 'resize',
+        value: function resize() {
+          var _this$wrap3 = this.wrap,
+            clientWidth = _this$wrap3.clientWidth,
+            clientHeight = _this$wrap3.clientHeight;
+          setCanvas(this.canvas, clientWidth, clientHeight);
+          this.renderPixelSize();
+          this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        },
+      },
+    ]);
+
+    return Renderer;
+  })();
 
   // @ts-nocheck
   var Material = /*#__PURE__*/ (function() {
@@ -1764,6 +1817,200 @@
     return BasicMaterial;
   })(Material);
 
+  // @ts-nocheck
+  function createProgram(gl, vshader, fshader) {
+    // Create shader object
+    var vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader); // 创建顶点着色器对象
+
+    var fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader); // 创建片元着色器对象
+
+    if (!vertexShader || !fragmentShader) {
+      return null;
+    } // Create a program object
+
+    var program = gl.createProgram(); // 创建程序对象
+
+    if (!program) {
+      return null;
+    } // Attach the shader objects
+
+    gl.attachShader(program, vertexShader); // 绑定着色器对象
+
+    gl.attachShader(program, fragmentShader); // Link the program object
+
+    gl.linkProgram(program); // 链接着色器对象
+    // Check the result of linking
+
+    var linked = gl.getProgramParameter(program, gl.LINK_STATUS); // 判断着色器对象是否链接成功
+
+    if (!linked) {
+      var error = gl.getProgramInfoLog(program);
+      console.log('Failed to link program: ' + error);
+      gl.deleteProgram(program);
+      gl.deleteShader(fragmentShader);
+      gl.deleteShader(vertexShader);
+      return null;
+    }
+
+    return program;
+  }
+  function loadShader(gl, type, source) {
+    // Create shader object
+    var shader = gl.createShader(type); // 生成着色器对象
+
+    if (shader == null) {
+      console.log('unable to create shader');
+      return null;
+    } // Set the shader program
+
+    gl.shaderSource(shader, source); // 载入着色器
+    // Compile the shader
+
+    gl.compileShader(shader); // 编译着色器代码
+    // Check the result of compilation
+
+    var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS); // 判断着色器对象是否生成成功
+    // gl.SHADER_TYPE、gl.DELETE_STATUS、gl.COMPILE_STATUS
+
+    if (!compiled) {
+      var error = gl.getShaderInfoLog(shader);
+      console.log('Failed to compile shader: ' + error);
+      gl.deleteShader(shader);
+      return null;
+    }
+
+    return shader;
+  }
+  function bindAttriBuffer(gl, attrName, vertices, count, program) {
+    var buffer = gl.createBuffer();
+
+    if (!buffer) {
+      console.log('failed create vertex buffer');
+    }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // 将缓冲区对象绑定到目标
+
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW); // 向缓冲区对象中写入数据
+
+    var attr = gl.getAttribLocation(program, attrName);
+    gl.vertexAttribPointer(attr, count, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(attr);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    return {
+      buffer: buffer,
+      attr: attr,
+      count: count,
+    };
+  }
+  function bindAttriIndicesBuffer(gl, indices) {
+    var buffer = gl.createBuffer();
+
+    if (!buffer) {
+      console.log('failed create vertex buffer');
+    }
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    return buffer;
+  }
+  function bindUnifrom(gl, unifromName, data, program, vec) {
+    var uniform = gl.getUniformLocation(program, unifromName);
+
+    if (uniform < 0) {
+      console.log('无法获取 uniform 变量的存储位置');
+    }
+
+    setUnifrom(gl, uniform, data, vec);
+    return uniform;
+  }
+  function setUnifrom(gl, location, data, vec) {
+    switch (vec) {
+      case 'float':
+        gl.uniform1f(location, data);
+        break;
+
+      case 'vec2':
+        gl.uniform2fv(location, data);
+        break;
+
+      case 'vec3':
+        gl.uniform3fv(location, data);
+        break;
+
+      case 'vec4':
+        gl.uniform4fv(location, data);
+        break;
+
+      case 'bool':
+        gl.uniform1i(location, data); // 1 - true    0 - false
+
+        break;
+
+      case 'sampler2d':
+        break;
+
+      case 'mat4':
+        gl.uniformMatrix4fv(location, false, data);
+        break;
+    }
+  }
+  function initFramebuffer(gl) {
+    var drawingBufferWidth = gl.drawingBufferWidth,
+      drawingBufferHeight = gl.drawingBufferHeight; // floorPowerOfTwo(OFFER_SCREEN_WIDTH)
+    // console.log(floorPowerOfTwo(OFFER_SCREEN_WIDTH), floorPowerOfTwo(OFFER_SCREEN_HEIGHT))
+
+    var OFFER_SCREEN_WIDTH = floorPowerOfTwo(drawingBufferWidth);
+    var OFFER_SCREEN_HEIGHT = floorPowerOfTwo(drawingBufferHeight);
+    var FRAMEBUFFER = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, FRAMEBUFFER);
+    var depthbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthbuffer);
+    gl.renderbufferStorage(
+      gl.RENDERBUFFER,
+      gl.DEPTH_COMPONENT16,
+      OFFER_SCREEN_WIDTH,
+      OFFER_SCREEN_HEIGHT,
+    );
+    gl.framebufferRenderbuffer(
+      gl.FRAMEBUFFER,
+      gl.DEPTH_ATTACHMENT,
+      gl.RENDERBUFFER,
+      depthbuffer,
+    );
+    var texture = gl.createTexture();
+    FRAMEBUFFER.texture = texture;
+    FRAMEBUFFER.width = OFFER_SCREEN_WIDTH;
+    FRAMEBUFFER.height = OFFER_SCREEN_HEIGHT;
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA,
+      OFFER_SCREEN_WIDTH,
+      OFFER_SCREEN_HEIGHT,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      null,
+    );
+    gl.framebufferTexture2D(
+      gl.FRAMEBUFFER,
+      gl.COLOR_ATTACHMENT0,
+      gl.TEXTURE_2D,
+      texture,
+      0,
+    );
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return {
+      FRAMEBUFFER: FRAMEBUFFER,
+      OFFER_SCREEN_WIDTH: OFFER_SCREEN_WIDTH,
+      OFFER_SCREEN_HEIGHT: OFFER_SCREEN_HEIGHT,
+    };
+  }
+
   var Plane = /*#__PURE__*/ (function(_Group) {
     _inherits(Plane, _Group);
 
@@ -1804,8 +2051,7 @@
 
           this.gl = gl;
           this.camera = camera;
-          this.cameraDistance = distance(camera.position, this.position); // console.log('this.cameraDistance', this.cameraDistance)
-
+          this.cameraDistance = distance(camera.position, this.position);
           this.material.init(this.gl);
           this.program = createProgram(
             this.gl,
@@ -1927,12 +2173,12 @@
           ); // uniformName, data, vec
         },
         /**
-         * 更新 shader 的 uniform 变量的值
+         * 更新 shader 的 attribute/uniform 变量的值
          */
       },
       {
-        key: 'updateShaderUnifroms',
-        value: function updateShaderUnifroms() {
+        key: 'updateAttributeUnifroms',
+        value: function updateAttributeUnifroms() {
           var _this2 = this;
 
           // reBindBuffer
@@ -1993,7 +2239,7 @@
 
           this.setCamera(camera); // update unifrom
 
-          this.updateShaderUnifroms();
+          this.updateAttributeUnifroms();
           this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
         },
         /**
@@ -2081,232 +2327,417 @@
     return Plane;
   })(Group);
 
-  /**
-   * 视图
-   */
+  var Box = /*#__PURE__*/ (function(_Group) {
+    _inherits(Box, _Group);
 
-  var ViewPort = /*#__PURE__*/ (function() {
-    function ViewPort(props) {
-      _classCallCheck(this, ViewPort);
+    var _super = _createSuper(Box);
 
-      this.eye = (props === null || props === void 0 ? void 0 : props.eye) || [
-        1,
-        1,
-        1,
-      ];
-      this.target = (props === null || props === void 0
-        ? void 0
-        : props.target) || [0, 0, 0];
-      this.up = (props === null || props === void 0 ? void 0 : props.up) || [
-        0,
-        1,
-        0,
-      ];
-      this.viewMatrix = create();
-      this.initViewMatrix();
+    function Box(props) {
+      var _this;
+
+      _classCallCheck(this, Box);
+
+      _this = _super.call(this, props);
+      _this.type = 'CubeMesh';
+      _this.shaderAttributes = void 0;
+      _this.indices = void 0;
+      _this.indicesBuffer = void 0;
+      props.material !== undefined && (_this.material = props.material);
+      _this.width = 1;
+      _this.height = 0.5; // 当前对象的 shader 变量参数列表
+
+      _this.shaderUnifroms = [];
+      _this.shaderAttributes = [];
+      return _this;
     }
 
-    _createClass(ViewPort, [
+    _createClass(Box, [
       {
-        key: 'initViewMatrix',
-        value: function initViewMatrix() {
-          lookAt(this.viewMatrix, this.eye, this.target, this.up);
-        },
-      },
-      {
-        key: 'getViewMatrix',
-        value: function getViewMatrix() {
-          return this.viewMatrix;
-        },
-      },
-    ]);
+        key: 'init',
+        value: function init(gl, camera) {
+          var _this$material;
 
-    return ViewPort;
-  })();
-
-  var Camera = /*#__PURE__*/ (function() {
-    function Camera(props) {
-      _classCallCheck(this, Camera);
-
-      this.position = void 0;
-      this.aspect = void 0;
-      this.fov =
-        (props === null || props === void 0 ? void 0 : props.fov) || 40;
-      this.aspect =
-        (props === null || props === void 0 ? void 0 : props.aspect) || 1; // this.aspect =  1;
-
-      this.near =
-        (props === null || props === void 0 ? void 0 : props.near) || 0.01;
-      this.far =
-        (props === null || props === void 0 ? void 0 : props.far) || 100;
-      this.position = (props === null || props === void 0
-        ? void 0
-        : props.position) || [1, 1, 1];
-      this.target = (props === null || props === void 0
-        ? void 0
-        : props.target) || [0, 0, 0];
-      this.up = (props === null || props === void 0 ? void 0 : props.up) || [
-        0,
-        1,
-        0,
-      ];
-      this.viewPort = new ViewPort({
-        eye: this.position,
-        target: this.target,
-        up: this.up,
-      }); // 初始化透视矩阵
-
-      this.initPerspectiveMatrix();
-    }
-    /**
-     * 初始化透视矩阵
-     */
-
-    _createClass(Camera, [
-      {
-        key: 'initPerspectiveMatrix',
-        value: function initPerspectiveMatrix() {
-          this.perspectiveMatrix = create();
-          perspective(
-            this.perspectiveMatrix,
-            (this.fov * Math.PI) / 180,
-            this.aspect,
-            this.near,
-            this.far,
+          this.gl = gl;
+          this.camera = camera;
+          this.cameraDistance = distance(camera.position, this.position);
+          (_this$material = this.material) === null || _this$material === void 0
+            ? void 0
+            : _this$material.init(this.gl);
+          this.program = createProgram(
+            this.gl,
+            this.getCubeVSHADER(),
+            this.getCubeFSHADER(),
           );
-        },
-      },
-      {
-        key: 'resize',
-        value: function resize(width, height) {
-          this.aspect = width / height; // console.log('this.aspect', this.aspect)
+          this.gl.useProgram(this.program); // 创建一个立方体
+          //    v6----- v5
+          //   /|      /|
+          //  v1------v0|
+          //  | |     | |
+          //  | |v7---|-|v4
+          //  |/      |/
+          //  v2------v3
 
-          this.updatePerspectiveMatrix();
+          var cubeVertices = new Float32Array([
+            1.0,
+            1.0,
+            1.0,
+            -1.0,
+            1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            1.0,
+            -1.0,
+            1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            1.0,
+            -1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            -1.0,
+            1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            -1.0,
+            1.0,
+            -1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            1.0,
+            1.0,
+            -1.0,
+            1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+            1.0, // v2
+          ]);
+          var cubeColors = new Float32Array([
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0, // v2
+          ]); // let FSIZE = cubeVertices.BYTES_PER_ELEMENT;
+
+          this.indices = new Uint8Array([
+            0,
+            1,
+            2,
+            0,
+            2,
+            3,
+            6,
+            5,
+            4,
+            6,
+            4,
+            7,
+            8,
+            9,
+            10,
+            8,
+            10,
+            11,
+            12,
+            13,
+            14,
+            12,
+            14,
+            15,
+            16,
+            17,
+            18,
+            16,
+            18,
+            19,
+            20,
+            21,
+            22,
+            20,
+            22,
+            23,
+          ]);
+          this.setUnifroms();
+          this.shaderAttributes.push(
+            bindAttriBuffer(
+              this.gl,
+              'a_Position',
+              cubeVertices,
+              3,
+              this.program,
+            ),
+          );
+          this.shaderAttributes.push(
+            bindAttriBuffer(this.gl, 'a_Color', cubeColors, 3, this.program),
+          );
+          this.indicesBuffer = bindAttriIndicesBuffer(this.gl, this.indices);
         },
         /**
-         * 更新透视矩阵
+         * @param camera
          */
       },
       {
-        key: 'updatePerspectiveMatrix',
-        value: function updatePerspectiveMatrix() {
-          this.initPerspectiveMatrix();
+        key: 'setCamera',
+        value: function setCamera(camera) {
+          this.camera = camera;
         },
+        /**
+         * 设置当前着色器的 uniform 变量
+         */
       },
       {
-        key: 'getPerspectiveMatrix',
-        value: function getPerspectiveMatrix() {
-          return this.perspectiveMatrix;
+        key: 'setUnifroms',
+        value: function setUnifroms() {
+          this.projMatrix = this.camera.getPerspectiveMatrix();
+          var u_projMatrixLocaion = bindUnifrom(
+            this.gl,
+            'u_projMatrix',
+            this.projMatrix,
+            this.program,
+            'mat4',
+          );
+          this.viewMatrix = this.camera.getViewMatrix();
+          var u_viewMatrixLocation = bindUnifrom(
+            this.gl,
+            'u_viewMatrix',
+            this.viewMatrix,
+            this.program,
+            'mat4',
+          );
+          var u_modelMatrixLocation = bindUnifrom(
+            this.gl,
+            'u_modelMatrix',
+            this.modelMatrix,
+            this.program,
+            'mat4',
+          );
         },
+        /**
+         * 更新 shader 的 attribute/uniform 变量的值
+         */
       },
       {
-        key: 'getViewMatrix',
-        value: function getViewMatrix() {
-          return this.viewPort.getViewMatrix();
-        },
-      },
-    ]);
+        key: 'updateAttributeUnifroms',
+        value: function updateAttributeUnifroms() {
+          var _this2 = this;
 
-    return Camera;
-  })();
+          //  reBindIndices
+          if (this.indices && this.indicesBuffer) {
+            this.gl.bindBuffer(
+              this.gl.ELEMENT_ARRAY_BUFFER,
+              this.indicesBuffer,
+            );
+            this.gl.bufferData(
+              this.gl.ELEMENT_ARRAY_BUFFER,
+              this.indices,
+              this.gl.STATIC_DRAW,
+            );
+          } // reBindBuffer
 
-  var getCanvas = function getCanvas(width, height) {
-    var canvas = document.createElement('canvas');
-    setCanvas(canvas, width, height);
-    return canvas;
-  };
-  var setCanvas = function setCanvas(canvas, width, height) {
-    canvas.width = width * window.devicePixelRatio;
-    canvas.height = height * window.devicePixelRatio;
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-  };
+          this.shaderAttributes.map(function(_ref) {
+            var buffer = _ref.buffer,
+              attr = _ref.attr,
+              count = _ref.count;
 
-  var Renderer = /*#__PURE__*/ (function() {
-    function Renderer(props) {
-      _classCallCheck(this, Renderer);
+            _this2.gl.bindBuffer(_this2.gl.ARRAY_BUFFER, buffer); // 将缓冲区对象绑定到目标
 
-      this.gl = void 0;
-      this.wrap = void 0;
-      this.clearColor = void 0;
-      this.canvas = void 0;
-      this.renderPixelWidth = void 0;
-      this.renderPixelHeight = void 0;
-      this.clearColor = new Color(props.clearColor);
-      this.initRenderContext(props.wrap);
-      this.renderPixelSize();
-    }
+            _this2.gl.vertexAttribPointer(
+              attr,
+              count,
+              _this2.gl.FLOAT,
+              false,
+              0,
+              0,
+            );
 
-    _createClass(Renderer, [
-      {
-        key: 'initRenderContext',
-        value: function initRenderContext(wrap) {
-          if (typeof wrap === 'string') {
-            this.wrap = document.getElementById('wrap');
-            var _this$wrap = this.wrap,
-              clientWidth = _this$wrap.clientWidth,
-              clientHeight = _this$wrap.clientHeight;
-            this.canvas = getCanvas(clientWidth, clientHeight);
-          } else if (wrap instanceof HTMLCanvasElement) {
-            this.wrap = wrap.parentNode;
-            this.canvas = wrap;
-          } else {
-            this.wrap = wrap;
-            var _this$wrap2 = this.wrap,
-              _clientWidth = _this$wrap2.clientWidth,
-              _clientHeight = _this$wrap2.clientHeight;
-            this.canvas = getCanvas(_clientWidth, _clientHeight);
+            _this2.gl.bindBuffer(_this2.gl.ARRAY_BUFFER, null);
+          }); // reBindUnifrom
+
+          this.setUnifroms(); // TODO: 每次渲染的时候重新为纹理分配纹理空间
+
+          if (this.texture) {
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+            var u_Sampler = this.gl.getUniformLocation(
+              this.program,
+              'u_Sampler',
+            );
+            this.gl.uniform1i(u_Sampler, 0);
           }
-
-          this.wrap.appendChild(this.canvas);
-          this.gl = this.canvas.getContext('webgl');
-          this.initGLParams(this.gl);
         },
+        /**
+         * 存储当前网格对象的 unifrom 变量
+         */
       },
       {
-        key: 'initGLParams',
-        value: function initGLParams(gl) {
-          var c = this.clearColor.getRGBA();
-          gl.clearColor(c[0], c[1], c[2], c[3]);
-          gl.clear(gl.COLOR_BUFFER_BIT);
-          gl.enable(gl.DEPTH_TEST); // 开启深度检测
-
-          gl.clear(gl.DEPTH_BUFFER_BIT); // 清除深度缓存
-
-          gl.enable(gl.BLEND); // 开启混合
-
-          gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // 指定混合函数
-
-          gl.enable(gl.CULL_FACE); // 开启背面剔除
-
-          gl.disable(gl.CULL_FACE); // 关闭背面剔除
-        },
+        key: 'addShaderUnifroms',
+        value:
+          /**
+           * 存储当前网格对象的 unifrom 变量
+           * @param {*} location
+           * @param {*} type
+           * @param {*} currentDataLocation
+           */
+          function addShaderUnifroms(location, type, currentDataLocation, vec) {
+            this.shaderUnifroms.push({
+              location: location,
+              type: type,
+              currentDataLocation: currentDataLocation,
+              vec: vec,
+            });
+          },
+        /**
+         * 绘制当前的网格对象
+         */
       },
       {
-        key: 'renderPixelSize',
-        value: function renderPixelSize() {
-          var _this$canvas = this.canvas,
-            clientWidth = _this$canvas.clientWidth,
-            clientHeight = _this$canvas.clientHeight;
-          this.renderPixelWidth = clientWidth;
-          this.renderPixelHeight = clientHeight;
+        key: 'draw',
+        value: function draw(camera) {
+          // TODO:  切换程序对象
+          this.gl.useProgram(this.program); // TODO: reset camera
+
+          this.setCamera(camera); // update unifrom
+
+          this.updateAttributeUnifroms(); // this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
+
+          this.gl.drawElements(
+            this.gl.TRIANGLES,
+            this.indices.length,
+            this.gl.UNSIGNED_BYTE,
+            0,
+          );
         },
+        /**
+         * 返回顶点着色器代码
+         * @returns
+         */
       },
       {
-        key: 'resize',
-        value: function resize() {
-          var _this$wrap3 = this.wrap,
-            clientWidth = _this$wrap3.clientWidth,
-            clientHeight = _this$wrap3.clientHeight;
-          setCanvas(this.canvas, clientWidth, clientHeight);
-          this.renderPixelSize();
-          this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        key: 'getCubeVSHADER',
+        value: function getCubeVSHADER() {
+          return '\n            uniform mat4 u_projMatrix;\n            uniform mat4 u_viewMatrix;\n            uniform mat4 u_modelMatrix;\n\n            attribute vec4 a_Position;\n            attribute vec4 a_Color;\n\n            varying vec4 v_Color;\n            void main(){\n                v_Color = a_Color;\n\n                gl_Position = u_projMatrix * u_viewMatrix *  u_modelMatrix * a_Position;\n           \n            }\n        ';
+        },
+        /**
+         * 返回片元着色器代码
+         * @returns
+         */
+      },
+      {
+        key: 'getCubeFSHADER',
+        value: function getCubeFSHADER() {
+          return '\n            #ifdef GL_ES\n            precision mediump float;\n            #endif\n            varying vec4 v_Color;\n            void main(){\n                gl_FragColor = v_Color;\n                // gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n            }\n        ';
         },
       },
     ]);
 
-    return Renderer;
-  })();
+    return Box;
+  })(Group);
 
   var GrayPass = /*#__PURE__*/ (function() {
     function GrayPass(props) {
@@ -2415,6 +2846,7 @@
   })();
 
   exports.BasicMaterial = BasicMaterial;
+  exports.Box = Box;
   exports.Camera = Camera;
   exports.Color = Color;
   exports.GrayPass = GrayPass;

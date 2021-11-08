@@ -27,6 +27,13 @@
               "meta": {
                 "order": 1
               }
+            },
+            {
+              "path": "/demo/box",
+              "title": "cube demo",
+              "meta": {
+                "order": 1
+              }
             }
           ]
         }

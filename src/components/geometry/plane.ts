@@ -1,5 +1,4 @@
 import { ICamera } from '@/utils/camera';
-import { mat4 } from 'gl-matrix';
 import * as glUtils from '../../utils/gl';
 import Group from '../group';
 import { IScene } from '../scene';
@@ -41,7 +40,6 @@ export default class Plane extends Group {
     this.camera = camera;
 
     this.cameraDistance = distance(camera.position, this.position);
-    // console.log('this.cameraDistance', this.cameraDistance)
     this.material.init(this.gl);
 
     this.program = glUtils.createProgram(
@@ -152,9 +150,9 @@ export default class Plane extends Group {
   }
 
   /**
-   * 更新 shader 的 uniform 变量的值
+   * 更新 shader 的 attribute/uniform 变量的值
    */
-  updateShaderUnifroms() {
+  updateAttributeUnifroms() {
     // reBindBuffer
     this.shaderAttributes.map(({ buffer, attr, count }) => {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer); // 将缓冲区对象绑定到目标
@@ -194,7 +192,7 @@ export default class Plane extends Group {
     this.setCamera(camera);
 
     // update unifrom
-    this.updateShaderUnifroms();
+    this.updateAttributeUnifroms();
 
     this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
   }
