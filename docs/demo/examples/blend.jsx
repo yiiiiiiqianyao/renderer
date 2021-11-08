@@ -1,5 +1,5 @@
 import React from 'react';
-import * as SR from 'renderer';
+import * as SR from '@yiqianyao/renderer';
 const Img = require('./assets/pkq.png');
 const Img4 = require('./assets/img1.jpg');
 
@@ -37,7 +37,7 @@ export default () => {
       renderer,
     });
 
-    let plane = new SR.Plane({
+    let plane = new SR.PlaneGeometry({
       width: 1,
       height: 1,
       position: [0, 0, 0],
@@ -45,14 +45,14 @@ export default () => {
       material: mat1,
     });
 
-    let plane2 = new SR.Plane({
+    let plane2 = new SR.PlaneGeometry({
       width: 0.5,
       height: 0.5,
       position: [0, 0, 1],
       material: mat2,
     });
 
-    let plane3 = new SR.Plane({
+    let plane3 = new SR.PlaneGeometry({
       height: 0.5,
       position: [0, 0, 2],
       rotation: [0, 0, 0],

@@ -1,5 +1,5 @@
 {
-  "name": "renderer",
+  "name": "@yiqianyao/renderer",
   "version": "1.0.0",
   "scripts": {
     "start": "dumi dev",
@@ -7,7 +7,7 @@
     "docs:deploy": "gh-pages -d docs-dist",
     "build": "father-build",
     "deploy": "yarn run docs:build && yarn run docs:deploy",
-    "release": "yarn run build && yarn publish",
+    "release": "yarn run build && yarn publish --access=public",
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
     "test": "umi-test",
     "test:coverage": "umi-test --coverage"

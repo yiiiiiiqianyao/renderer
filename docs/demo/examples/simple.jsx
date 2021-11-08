@@ -1,5 +1,5 @@
 import React from 'react';
-import * as SR from 'renderer';
+import * as SR from '@yiqianyao/renderer';
 const Img = require('./assets/pkq.png');
 const Img4 = require('./assets/img1.jpg');
 
@@ -20,6 +20,12 @@ export default () => {
       map: Img4,
     });
 
+    let mat3 = new SR.BasicMaterial({
+      color: 'blue',
+      transparent: true,
+      opacity: 0.6,
+    });
+
     let camera = new SR.Camera({
       target: [2, 1, 0],
       position: [5, 2, 5],
@@ -32,7 +38,7 @@ export default () => {
       renderer,
     });
 
-    let plane = new SR.Plane({
+    let plane = new SR.PlaneGeometry({
       width: 1,
       height: 1,
       position: [-1, 0, 0],
@@ -40,16 +46,17 @@ export default () => {
       material: mat1,
     });
 
-    let plane2 = new SR.Plane({
+    let plane2 = new SR.PlaneGeometry({
       width: 0.5,
       height: 0.5,
       position: [-0.3, 0, 2],
       material: mat2,
     });
 
-    let plane3 = new SR.Plane({
+    let plane3 = new SR.PlaneGeometry({
       position: [1, 0, 0.4],
       rotation: [Math.PI / 2, 0, 0],
+      material: mat3,
     });
 
     scene.add(plane);
@@ -64,6 +71,7 @@ export default () => {
 
       scene.renderScene();
     });
+
     // scene.setTranslete([1, 0, 0])
 
     // add test pass - webgl1

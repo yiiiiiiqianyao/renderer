@@ -10,6 +10,8 @@ export default class Group {
   public viewMatrix: mat4;
   public modelMatrix: mat4;
 
+  public program: WebGLProgram;
+
   public position: Point;
 
   public cameraDistance: number;

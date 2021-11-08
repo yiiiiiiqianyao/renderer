@@ -35,7 +35,7 @@ export function createProgram(gl, vshader, fshader) {
   return program;
 }
 
-export function loadShader(gl, type, source) {
+export function loadShader(gl: WebGLRenderingContext, type, source) {
   // Create shader object
   var shader = gl.createShader(type); // 生成着色器对象
   if (shader == null) {
@@ -62,7 +62,13 @@ export function loadShader(gl, type, source) {
   return shader;
 }
 
-export function bindAttriBuffer(gl, attrName, vertices, count, program) {
+export function bindAttriBuffer(
+  gl: WebGLRenderingContext,
+  attrName: string,
+  vertices,
+  count,
+  program,
+) {
   let buffer = gl.createBuffer();
   if (!buffer) {
     console.log('failed create vertex buffer');
@@ -75,6 +81,19 @@ export function bindAttriBuffer(gl, attrName, vertices, count, program) {
   gl.enableVertexAttribArray(attr);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
   return { buffer, attr, count };
+}
+
+export function bindAttriIndicesBuffer(
+  gl: WebGLRenderingContext,
+  indices: Uint8Array,
+): WebGLBuffer {
+  let buffer = gl.createBuffer();
+  if (!buffer) {
+    console.log('failed create vertex buffer');
+  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+  return buffer;
 }
 
 export function bindUnifrom(gl, unifromName, data, program, vec) {
