@@ -1,6 +1,13 @@
 import BasicMaterial from './BasicMaterial';
 
-export default class PlaneMaterial extends BasicMaterial {
+interface IPlaneMaterial {}
+
+interface IPlaneMaterialProps {}
+export default class PlaneMaterial extends BasicMaterial
+  implements IPlaneMaterial {
+  constructor(props: IPlaneMaterialProps) {
+    super(props);
+  }
   /**
    * 返回顶点着色器代码
    * @returns

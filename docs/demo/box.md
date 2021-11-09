@@ -1,5 +1,5 @@
 ---
-title: cube demo
+title: box demo
 order: 1
 ---
 

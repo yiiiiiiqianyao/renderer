@@ -135,6 +135,13 @@ export default class Mesh extends Group implements IMesh {
       );
     }
 
+    // TODO: 每次渲染的时候重新为纹理分配纹理空间
+    if (this.material.texture) {
+      this.gl.bindTexture(this.gl.TEXTURE_2D, this.material.texture);
+      var u_Sampler = this.gl.getUniformLocation(this.program, 'u_Sampler');
+      this.gl.uniform1i(u_Sampler, 0);
+    }
+
     // uniformName, data, vec
   }
 

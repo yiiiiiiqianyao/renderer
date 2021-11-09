@@ -91,6 +91,7 @@ export default class Scene extends Group implements IScene {
 
   renderScene() {
     if (this.passList.length > 0) {
+      // console.log(this.gl.FRAMEBUFFER)
       for (let i = 0; i < this.passList.length; i++) {
         let pass = this.passList[i];
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, pass.framebuffer);
