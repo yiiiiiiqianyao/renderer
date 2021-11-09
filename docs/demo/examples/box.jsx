@@ -26,6 +26,7 @@ export default () => {
     let mesh = new SR.Mesh({
       geometry: box,
       material,
+      position: [1, 0, 0],
     });
     scene.add(mesh);
 

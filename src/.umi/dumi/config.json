@@ -23,7 +23,7 @@
             },
             {
               "path": "/demo/box",
-              "title": "cube demo",
+              "title": "box demo",
               "meta": {
                 "order": 1
               }

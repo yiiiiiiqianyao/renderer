@@ -76,7 +76,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/blend.zh.md",
-          "updatedTime": 1636291345000,
+          "updatedTime": 1636390693000,
           "title": "blend demo",
           "order": 1,
           "slugs": [
@@ -104,8 +104,8 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/box.md",
-          "updatedTime": 1636364326000,
-          "title": "cube demo",
+          "updatedTime": 1636390693000,
+          "title": "box demo",
           "order": 1,
           "slugs": [
             {
@@ -124,7 +124,7 @@ export function getRoutes() {
             "title": "Demo"
           }
         },
-        "title": "cube demo - renderer"
+        "title": "box demo - renderer"
       },
       {
         "path": "/demo/mesh",
@@ -132,7 +132,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/mesh.md",
-          "updatedTime": 1636376002000,
+          "updatedTime": 1636390693000,
           "title": "mesh demo",
           "order": 1,
           "slugs": [
@@ -160,7 +160,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/simple.zh.md",
-          "updatedTime": 1636390634312,
+          "updatedTime": 1636390693000,
           "title": "simple demo",
           "order": 1,
           "slugs": [
@@ -188,7 +188,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/simplePass.zh.md",
-          "updatedTime": 1636390544535,
+          "updatedTime": 1636390693000,
           "title": "simple pass demo",
           "order": 1,
           "slugs": [
