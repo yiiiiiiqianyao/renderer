@@ -104,7 +104,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/box.md",
-          "updatedTime": 1636390693000,
+          "updatedTime": 1636429297000,
           "title": "box demo",
           "order": 1,
           "slugs": [
@@ -209,6 +209,34 @@ export function getRoutes() {
           }
         },
         "title": "simple pass demo - renderer"
+      },
+      {
+        "path": "/demo/wind",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/wind.zh.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/wind.zh.md",
+          "updatedTime": 1636790035717,
+          "title": "wind demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "风场",
+              "heading": "风场"
+            },
+            {
+              "depth": 2,
+              "value": "wind demo",
+              "heading": "wind-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "wind demo - renderer"
       },
       {
         "path": "/demo",

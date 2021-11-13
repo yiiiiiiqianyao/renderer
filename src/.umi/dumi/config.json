@@ -48,6 +48,13 @@
               "meta": {
                 "order": 1
               }
+            },
+            {
+              "path": "/demo/wind",
+              "title": "wind demo",
+              "meta": {
+                "order": 1
+              }
             }
           ]
         }

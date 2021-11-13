@@ -13,6 +13,8 @@ import BoxGeometry from './components/geometry/boxGeometry';
 
 import Mesh from './components/object/Mesh';
 
+import Wind from './components/object/Wind';
+
 import GrayPass from './components/pass/gray';
 
 export {
@@ -27,4 +29,5 @@ export {
   BoxGeometry,
   Mesh,
   GrayPass,
+  Wind,
 };

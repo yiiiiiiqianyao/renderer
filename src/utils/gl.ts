@@ -32,6 +32,17 @@ export function createProgram(gl, vshader, fshader) {
     gl.deleteShader(vertexShader);
     return null;
   }
+
+  var numAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+  for (var i = 0; i < numAttributes; i++) {
+    var attribute = gl.getActiveAttrib(program, i);
+    program[attribute.name] = gl.getAttribLocation(program, attribute.name);
+  }
+  var numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+  for (var i$1 = 0; i$1 < numUniforms; i$1++) {
+    var uniform = gl.getActiveUniform(program, i$1);
+    program[uniform.name] = gl.getUniformLocation(program, uniform.name);
+  }
   return program;
 }
 
@@ -60,6 +71,63 @@ export function loadShader(gl: WebGLRenderingContext, type, source) {
   }
 
   return shader;
+}
+
+export function createTexture(
+  gl: WebGLRenderingContext,
+  filter: any,
+  data: any,
+  width: number,
+  height: number,
+) {
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.RGBA,
+    width,
+    height,
+    0,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    data,
+  );
+
+  gl.bindTexture(gl.TEXTURE_2D, null);
+  return texture;
+}
+
+export function createDataTexture(
+  gl: WebGLRenderingContext,
+  filter: any,
+  data: any,
+) {
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+  gl.bindTexture(gl.TEXTURE_2D, null);
+  return texture;
+}
+
+export function bindTexture(gl, texture, unit) {
+  gl.activeTexture(gl.TEXTURE0 + unit);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+}
+
+export function createBuffer(gl, data) {
+  var buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  return buffer;
 }
 
 export function bindAttriBuffer(
