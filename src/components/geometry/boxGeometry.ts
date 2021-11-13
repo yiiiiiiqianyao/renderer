@@ -1,7 +1,6 @@
 // @ts-nocheck
 import * as glUtils from '../../utils/gl';
 import Geometry from './geometry';
-import { ICamera } from '../../utils/camera';
 import BasicMaterial, { IBasicMaterial } from '../material/BasicMaterial';
 import {
   initBoxGeometryVertices,

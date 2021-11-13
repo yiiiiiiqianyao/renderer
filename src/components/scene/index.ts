@@ -45,6 +45,12 @@ export default class Scene extends Group implements IScene {
     }
   }
 
+  reLoadMesh(mesh) {
+    if (this.gl && this.camera) {
+      mesh.init(this.gl, this.camera, this);
+    }
+  }
+
   setCamera(camera: ICamera) {
     this.camera = camera;
   }
