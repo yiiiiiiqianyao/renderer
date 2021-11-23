@@ -53,7 +53,7 @@ export default class PlaneMaterial extends BasicMaterial
 
         this.imgLoading = false;
 
-        this.scene && this.scene.renderScene();
+        this.scene?.renderScene();
       });
       gl_FragColorLine = 'gl_FragColor = texture2D(u_Sampler, v_uv);\n';
     }

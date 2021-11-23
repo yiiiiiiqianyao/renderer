@@ -47,11 +47,7 @@ export default class Mesh extends Group implements IMesh {
     this.cameraDistance = distance(camera.position, this.position);
     this.material.init(this.gl, this.scene);
 
-    this.program = glUtils.createProgram(
-      this.gl,
-      this.material.getVShader(),
-      this.material.getFShader(),
-    );
+    this.program = this.material.program;
     this.gl.useProgram(this.program);
 
     this.setUnifroms();

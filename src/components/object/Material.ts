@@ -2,7 +2,7 @@ import { IScene } from '../scene';
 
 export interface IMaterial {
   gl: WebGLRenderingContext;
-  program: WebGLProgram;
+
   scene: IScene;
 
   on: (name: string, fn: (options: any) => any) => void;
@@ -13,13 +13,21 @@ export default class Material {
   private listeners: any;
 
   public gl: WebGLRenderingContext;
-  public program: WebGLProgram;
+  public isAbort: boolean = false;
 
   constructor() {
     this.listeners = {};
   }
 
+  abort() {
+    this.isAbort = true;
+  }
+
   on(name: string, fn: (options: any) => any) {
+    if (this.isAbort) {
+      this.isAbort = false;
+      return;
+    }
     if (!this.listeners[name]) {
       this.listeners[name] = [];
     }

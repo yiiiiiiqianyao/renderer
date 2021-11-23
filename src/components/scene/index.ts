@@ -8,7 +8,9 @@ export interface IScene {
   renderScene(): void;
 }
 
-interface ISceneProps {}
+interface ISceneProps {
+  destroy: () => void;
+}
 export default class Scene extends Group implements IScene {
   public type: string = 'Scene';
   public gl: WebGLRenderingContext;
@@ -119,4 +121,6 @@ export default class Scene extends Group implements IScene {
       this.drawElements();
     }
   }
+
+  destroy() {}
 }
