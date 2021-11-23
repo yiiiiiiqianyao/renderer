@@ -216,7 +216,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/demo/wind.zh.md",
-          "updatedTime": 1636790035717,
+          "updatedTime": 1636790072000,
           "title": "wind demo",
           "order": 1,
           "slugs": [

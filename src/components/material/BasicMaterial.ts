@@ -2,11 +2,12 @@ import { loadImage } from '../../utils/texture';
 
 import Color, { IColor } from '../object/Color';
 import Material from '../object/Material';
-import { IMesh } from '../object/Mesh';
 import { IScene } from '../scene';
 import * as glUtils from '../../utils/gl';
 
 export interface IMaterial {
+  program: WebGLProgram;
+
   color: IColor | null;
   transparent: boolean;
   opacity: number;
@@ -17,28 +18,30 @@ export interface IMaterial {
   init(gl: WebGLRenderingContext, scene: IScene): void;
   on(type: string, fn: (oprions: any) => void): void;
 
-  getVShader(): string;
-  getFShader(): string;
+  getVShader: () => string;
+  getFShader: () => string;
+
+  destroy: () => void;
 }
 interface IBasicMaterialProps {
   transparent?: boolean;
   opacity?: number;
   color?: string;
-  map?: any;
+  map?: string;
   image?: HTMLImageElement;
 }
 
 export default class BasicMaterial extends Material {
+  public program: WebGLProgram;
+
   public color: IColor | null;
   public opacity: number = 1.0;
   public transparent: boolean = false;
-  public map: any;
+  public map: string | undefined;
   public image: HTMLImageElement;
 
   public texture: WebGLTexture | null;
   public imgLoading: boolean = false;
-
-  public mesh: IMesh;
   public scene: IScene;
 
   constructor(props: IBasicMaterialProps) {
@@ -47,7 +50,7 @@ export default class BasicMaterial extends Material {
     props.opacity !== undefined && (this.opacity = props.opacity);
     props.transparent !== undefined && (this.transparent = props.transparent);
 
-    this.map = props?.map || undefined;
+    this.map = props.map;
   }
 
   async init(gl: WebGLRenderingContext, scene: IScene) {
@@ -98,7 +101,9 @@ export default class BasicMaterial extends Material {
       this.gl.UNSIGNED_BYTE,
       this.image,
     );
-
+    // add minimap
+    this.gl.generateMipmap(this.gl.TEXTURE_2D);
+    console.log('emit');
     this.emit('loadImage', {
       texture: this.texture,
       img: this.image,
@@ -135,7 +140,6 @@ export default class BasicMaterial extends Material {
 
       this.on('loadImage', ({ texture, img }) => {
         this.gl.useProgram(this.program);
-
         // TODO: cache texture
         this.texture = texture;
 
@@ -147,7 +151,7 @@ export default class BasicMaterial extends Material {
 
         this.imgLoading = false;
 
-        this.scene && this.scene.renderScene();
+        this.scene?.renderScene();
       });
       gl_FragColorLine = 'gl_FragColor = texture2D(u_Sampler, v_uv);\n';
     }
@@ -165,5 +169,11 @@ export default class BasicMaterial extends Material {
     return shader;
   }
 
-  destroy() {}
+  destroy() {
+    this.abort();
+    if (this.texture) {
+      this.gl.deleteTexture(this.texture);
+      this.texture = null;
+    }
+  }
 }
