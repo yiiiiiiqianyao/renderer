@@ -38,7 +38,12 @@ export default () => {
 
       scene.renderScene();
     });
-    // scene.setTranslete([1, 0, 0])
+    setTimeout(() => {
+      renderer.resize();
+      camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
+    });
+    renderer.resize();
+    camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
 
     // add test pass - webgl1
     // const grayPass = new SR.GrayPass({  });

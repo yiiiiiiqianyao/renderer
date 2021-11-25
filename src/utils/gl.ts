@@ -200,10 +200,9 @@ export function setUnifrom(gl, location, data, vec) {
 
 export function initFramebuffer(gl) {
   const { drawingBufferWidth, drawingBufferHeight } = gl;
-  // floorPowerOfTwo(OFFER_SCREEN_WIDTH)
-  // console.log(floorPowerOfTwo(OFFER_SCREEN_WIDTH), floorPowerOfTwo(OFFER_SCREEN_HEIGHT))
-  const OFFER_SCREEN_WIDTH = floorPowerOfTwo(drawingBufferWidth);
-  const OFFER_SCREEN_HEIGHT = floorPowerOfTwo(drawingBufferHeight);
+
+  const OFFER_SCREEN_WIDTH = drawingBufferWidth;
+  const OFFER_SCREEN_HEIGHT = drawingBufferHeight;
 
   const FRAMEBUFFER = gl.createFramebuffer();
   gl.bindFramebuffer(gl.FRAMEBUFFER, FRAMEBUFFER);
@@ -223,6 +222,7 @@ export function initFramebuffer(gl) {
   );
 
   const texture = gl.createTexture();
+  const textureSize = 1024;
   FRAMEBUFFER.texture = texture;
   FRAMEBUFFER.width = OFFER_SCREEN_WIDTH;
   FRAMEBUFFER.height = OFFER_SCREEN_HEIGHT;
@@ -230,6 +230,10 @@ export function initFramebuffer(gl) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
   gl.texImage2D(
     gl.TEXTURE_2D,
     0,
