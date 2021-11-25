@@ -1,3 +1,4 @@
+import elementResizeEvent, { unbind } from 'element-resize-event';
 import Color, { IColor } from '../object/Color';
 import { getCanvas, setCanvas } from '../utils/dom';
 

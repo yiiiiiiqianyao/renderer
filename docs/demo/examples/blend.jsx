@@ -29,6 +29,11 @@ export default () => {
       aspect: renderer.renderPixelWidth / renderer.renderPixelHeight,
     });
 
+    setTimeout(() => {
+      renderer.resize();
+      camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
+    });
+
     let scene = new SR.Scene({
       position: [0, 0, 0],
       camera,
@@ -80,6 +85,8 @@ export default () => {
 
       scene.renderScene();
     });
+    renderer.resize();
+    camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
 
     let r = 0;
     animate();

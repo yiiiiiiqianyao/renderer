@@ -122,5 +122,12 @@ export default class Scene extends Group implements IScene {
     }
   }
 
-  destroy() {}
+  destroy() {
+    // gl.deleteBuffer(buffer);
+    // gl.deleteRenderbuffer(renderbuffer);
+    // gl.deleteVertexArray(vertexArray); // 在 renderer 中没有使用 vao
+    // gl.deleteFramebuffer(frameBuffer);
+    // gl.deleteTexture(texture);
+    // gl.deleteProgram(program);
+  }
 }

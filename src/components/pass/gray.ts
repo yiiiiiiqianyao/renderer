@@ -114,8 +114,6 @@ export default class GrayPass implements IPass {
 
   drawPass() {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-    // console.log(this.program)
-    // console.log(this.gl)
     this.gl.useProgram(this.program);
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer); // 将缓冲区对象绑定到目标
@@ -128,8 +126,6 @@ export default class GrayPass implements IPass {
       0,
     );
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
-
-    // console.log(this.framebuffer)
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.framebuffer.texture);
     this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
     this.gl.bindTexture(this.gl.TEXTURE_2D, null);

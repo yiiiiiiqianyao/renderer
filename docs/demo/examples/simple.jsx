@@ -82,6 +82,13 @@ export default () => {
 
       scene.renderScene();
     });
+    setTimeout(() => {
+      renderer.resize();
+      camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
+    });
+
+    renderer.resize();
+    camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
 
     // scene.setTranslete([1, 0, 0])
 

@@ -75,6 +75,12 @@ export default () => {
 
       wind.reload();
     });
+    setTimeout(() => {
+      renderer.resize();
+      camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
+    });
+    renderer.resize();
+    camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
 
     animate();
     function animate() {

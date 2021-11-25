@@ -1913,6 +1913,11 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/element-resize-event@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/element-resize-event/-/element-resize-event-3.0.0.tgz#148b1d91aa095f2a14b48f69e1a5c0ab6caed5d6"
+  integrity sha512-7h9aZpeYvE4dOUHODO71wG6Cpz1Bw/pBiV2r9f7jWuw1eFeYGUawqhJDzIkDGW+cwZ0gmsVarBEcuKnS77uKpQ==
+
 "@types/estree@*":
   version "0.0.50"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.50.tgz#1e0caa9364d3fccd2931c3ed96fdbeaa5d4cca83"
@@ -4439,6 +4444,11 @@ electron-to-chromium@^1.3.878:
   version "1.3.886"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.886.tgz#ac039c4001b665b1dd0f0ed9c2e4da90ff3c9267"
   integrity sha512-+vYdeBosI63VkCtNWnEVFjgNd/IZwvnsWkKyPtWAvrhA+XfByKoBJcbsMgudVU/bUcGAF9Xp3aXn96voWlc3oQ==
+
+element-resize-event@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/element-resize-event/-/element-resize-event-3.0.6.tgz#3a18efd4879ad615e979fd8bbf173b014987eb9a"
+  integrity sha512-sSeXY9rNDp86bJODW68pxLcy3A5FrPZfIgOrJHzqgYzX513Zq6/ytdBigp7KeJEpZZopBBSiO1cVuiRkZpNxLw==
 
 elliptic@^6.5.3:
   version "6.5.4"
