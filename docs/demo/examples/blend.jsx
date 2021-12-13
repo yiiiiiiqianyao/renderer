@@ -5,7 +5,7 @@ export default () => {
   React.useEffect(() => {
     let renderer = new SR.Renderer({
       wrap: 'wrap',
-      clearColor: new SR.Color([0, 0, 0, 1]),
+      clearColor: new SR.Color([1, 1, 1, 1]),
     });
 
     let mat1 = new SR.PlaneMaterial({
@@ -87,6 +87,10 @@ export default () => {
     });
     renderer.resize();
     camera.resize(renderer.renderPixelWidth, renderer.renderPixelHeight);
+
+    // add test pass - webgl1
+    // const grayPass = new SR.GrayPass({  });
+    // scene.addPass(grayPass);
 
     let r = 0;
     animate();

@@ -1,7 +1,8 @@
 /**
- * drawProgram      drawVert drawFrag
- * screenProgram    quadVert screenFrag
- * updateProgram    quadVert updateFrag
+ * drawProgram          drawVert drawFrag
+ * screenProgram        screenVert screenFrag
+ * updateProgram        updateVert updateFrag
+ * fullScreenProgram    fullScreenVert fullScreenFrag
  */
 export const drawVert = `
 precision mediump float;
@@ -48,19 +49,6 @@ void main() {
     gl_FragColor = texture2D(u_color_ramp, ramp_pos);
 }`;
 
-export const quadVert = `
-    precision mediump float;
-    
-    attribute vec2 a_pos;
-    
-    varying vec2 v_tex_pos;
-    
-    void main() {
-        v_tex_pos = a_pos;
-        gl_Position = vec4(1.0 - 2.0 * a_pos, 0, 1);
-        // framebuffer 始终用铺满屏幕的 texture
-    }`;
-
 export const screenVert = `
     precision mediump float;
     
@@ -79,7 +67,7 @@ export const screenVert = `
 
 
         gl_Position = u_projMatrix * u_viewMatrix *  u_modelMatrix * vec4(1.0 - 2.0 * a_pos, 0, 1);
-    }`;
+}`;
 
 export const screenFrag = `
 precision mediump float;
@@ -95,36 +83,17 @@ void main() {
     gl_FragColor = vec4(floor(255.0 * color * u_opacity) / 255.0);
 }`;
 
-export const fullScreenVert = `
-    precision mediump float;
-    
-    attribute vec2 a_pos;
-    attribute vec2 a_uvs;
-    
-    varying vec2 v_tex_pos;
-
-
-    uniform mat4 u_projMatrix;
-    uniform mat4 u_viewMatrix;
-    uniform mat4 u_modelMatrix;
-    
-    void main() {
-        v_tex_pos = a_pos;
-        gl_Position = vec4(1.0 - 2.0 * a_pos, 0, 1);
-    }`;
-
-export const fullScreenFrag = `
+export const updateVert = `
 precision mediump float;
 
-uniform sampler2D u_screen;
-uniform float u_opacity;
+attribute vec2 a_pos;
+
 varying vec2 v_tex_pos;
 
 void main() {
-    vec4 color = texture2D(u_screen, 1.0 - v_tex_pos);
-    
-    // a hack to guarantee opacity fade out even with a value close to 1.0
-    gl_FragColor = vec4(floor(255.0 * color * u_opacity) / 255.0);
+    v_tex_pos = a_pos;
+    gl_Position = vec4(1.0 - 2.0 * a_pos, 0, 1);
+    // framebuffer 始终用铺满屏幕的 texture
 }`;
 
 export const updateFrag = `
@@ -193,4 +162,31 @@ void main() {
     gl_FragColor = vec4(
         fract(pos * 255.0),
         floor(pos * 255.0) / 255.0);
-    }`;
+}`;
+
+export const fullScreenVert = `
+    precision mediump float;
+    
+    attribute vec2 a_pos;
+    attribute vec2 a_uvs;
+    
+    varying vec2 v_tex_pos;
+    
+    void main() {
+        v_tex_pos = a_pos;
+        gl_Position = vec4(1.0 - 2.0 * a_pos, 0, 1);
+}`;
+
+export const fullScreenFrag = `
+precision mediump float;
+
+uniform sampler2D u_screen;
+uniform float u_opacity;
+varying vec2 v_tex_pos;
+
+void main() {
+    vec4 color = texture2D(u_screen, 1.0 - v_tex_pos);
+    
+    // a hack to guarantee opacity fade out even with a value close to 1.0
+    gl_FragColor = vec4(floor(255.0 * color * u_opacity) / 255.0);
+}`;

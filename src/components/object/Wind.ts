@@ -8,10 +8,10 @@ import * as glUtils from '../../utils/gl';
 import {
   drawVert,
   drawFrag,
-  quadVert,
+  updateVert,
+  updateFrag,
   screenVert,
   screenFrag,
-  updateFrag,
   fullScreenVert,
   fullScreenFrag,
 } from './windShader';
@@ -137,20 +137,20 @@ export default class Wind extends Group implements IMesh {
     this.dropRateBump = 0.01; // drop rate increase relative to individual particle speed
 
     this.drawProgram = glUtils.createProgram(gl, drawVert, drawFrag);
-    this.setUnifroms(this.drawProgram);
+    // this.setUnifroms(this.drawProgram);
 
     this.screenProgram = glUtils.createProgram(gl, screenVert, screenFrag);
-    this.setUnifroms(this.screenProgram);
+    // this.setUnifroms(this.screenProgram);
 
     this.fullScreenProgram = glUtils.createProgram(
       gl,
       fullScreenVert,
       fullScreenFrag,
     );
-    this.setUnifroms(this.fullScreenProgram);
+    // this.setUnifroms(this.fullScreenProgram);
 
-    this.updateProgram = glUtils.createProgram(gl, quadVert, updateFrag);
-    this.setUnifroms(this.updateProgram);
+    this.updateProgram = glUtils.createProgram(gl, updateVert, updateFrag);
+    // this.setUnifroms(this.updateProgram);
 
     this.quadBuffer = glUtils.createBuffer(
       gl,
@@ -346,7 +346,6 @@ export default class Wind extends Group implements IMesh {
     var gl = this.gl;
     var program = this.fullScreenProgram as any;
     gl.useProgram(program);
-    this.setUnifroms(program);
 
     bindAttribute(gl, this.quadBuffer, program.a_pos, 2);
 
@@ -376,7 +375,6 @@ export default class Wind extends Group implements IMesh {
     var gl = this.gl;
     var program = this.drawProgram as any;
     gl.useProgram(program);
-    this.setUnifroms(program);
 
     bindAttribute(gl, this.particleIndexBuffer, program.a_index, 1);
     glUtils.bindTexture(gl, this.colorRampTexture, 2);

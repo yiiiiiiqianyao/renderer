@@ -43,6 +43,20 @@
               }
             },
             {
+              "path": "/demo/simple-bloom-pass",
+              "title": "simple bloom pass demo",
+              "meta": {
+                "order": 1
+              }
+            },
+            {
+              "path": "/demo/simple-faxx",
+              "title": "simple faxx demo",
+              "meta": {
+                "order": 1
+              }
+            },
+            {
               "path": "/demo/simple-pass",
               "title": "simple pass demo",
               "meta": {

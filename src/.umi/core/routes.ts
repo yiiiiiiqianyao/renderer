@@ -183,6 +183,62 @@ export function getRoutes() {
         "title": "simple demo - renderer"
       },
       {
+        "path": "/demo/simple-bloom-pass",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/simpleBloomPass.zh.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/simpleBloomPass.zh.md",
+          "updatedTime": 1639317760299,
+          "title": "simple bloom pass demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "标准地图",
+              "heading": "标准地图"
+            },
+            {
+              "depth": 2,
+              "value": "simple pass demo",
+              "heading": "simple-pass-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "simple bloom pass demo - renderer"
+      },
+      {
+        "path": "/demo/simple-faxx",
+        "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/simpleFaxx.zh.md').default,
+        "exact": true,
+        "meta": {
+          "filePath": "docs/demo/simpleFaxx.zh.md",
+          "updatedTime": 1639317881869,
+          "title": "simple faxx demo",
+          "order": 1,
+          "slugs": [
+            {
+              "depth": 1,
+              "value": "标准地图",
+              "heading": "标准地图"
+            },
+            {
+              "depth": 2,
+              "value": "simple faxx demo",
+              "heading": "simple-faxx-demo"
+            }
+          ],
+          "group": {
+            "path": "/demo",
+            "title": "Demo"
+          }
+        },
+        "title": "simple faxx demo - renderer"
+      },
+      {
         "path": "/demo/simple-pass",
         "component": require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/simplePass.zh.md').default,
         "exact": true,

@@ -16,6 +16,8 @@ import Mesh from './components/object/Mesh';
 import Wind from './components/object/Wind';
 
 import GrayPass from './components/pass/gray';
+import BloomPass from './components/pass/bloom';
+import FaxxPass from './components/pass/faxx';
 
 export {
   Scene,
@@ -29,5 +31,7 @@ export {
   BoxGeometry,
   Mesh,
   GrayPass,
+  BloomPass,
+  FaxxPass,
   Wind,
 };
