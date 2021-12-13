@@ -7,6 +7,8 @@ import rawCode3 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Th
 import rawCode4 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simple.jsx?dumi-raw-code';
 import rawCode5 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simplePass.jsx?dumi-raw-code';
 import rawCode6 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/wind.jsx?dumi-raw-code';
+import rawCode7 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simpleBloomPass.jsx?dumi-raw-code';
+import rawCode8 from '!!dumi-raw-code-loader!/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simpleFaxx.jsx?dumi-raw-code';
 
 export default {
   'docs-blend': {
@@ -19,7 +21,7 @@ export default {
   },
   'docs-mesh': {
     component: (require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/mesh.jsx')).default,
-    previewerProps: {"sources":{"_":{"jsx":rawCode3}},"dependencies":{"react":{"version":"16.14.0"},"@yiqianyao/renderer":{"version":"1.0.0"}},"identifier":"docs-mesh"},
+    previewerProps: {"sources":{"_":{"jsx":rawCode3}},"dependencies":{},"identifier":"docs-mesh"},
   },
   'docs-simple': {
     component: (require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simple.jsx')).default,
@@ -32,5 +34,13 @@ export default {
   'docs-wind': {
     component: (require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/wind.jsx')).default,
     previewerProps: {"sources":{"_":{"jsx":rawCode6}},"dependencies":{"react":{"version":"16.14.0"},"@yiqianyao/renderer":{"version":"1.0.0"}},"identifier":"docs-wind"},
+  },
+  'docs-simplebloompass': {
+    component: (require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simpleBloomPass.jsx')).default,
+    previewerProps: {"sources":{"_":{"jsx":rawCode7}},"dependencies":{"react":{"version":"16.14.0"},"@yiqianyao/renderer":{"version":"1.0.0"}},"identifier":"docs-simplebloompass"},
+  },
+  'docs-simplefaxx': {
+    component: (require('/Users/yiqianyao/workspace/webGL-Three.js-CSS3/renderer/docs/demo/examples/simpleFaxx.jsx')).default,
+    previewerProps: {"sources":{"_":{"jsx":rawCode8}},"dependencies":{"react":{"version":"16.14.0"},"@yiqianyao/renderer":{"version":"1.0.0"}},"identifier":"docs-simplefaxx"},
   },
 };

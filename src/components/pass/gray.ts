@@ -14,11 +14,7 @@ export default class GrayPass implements IPass {
 
   init(gl: WebGLRenderingContext) {
     this.gl = gl;
-    const {
-      FRAMEBUFFER,
-      OFFER_SCREEN_WIDTH,
-      OFFER_SCREEN_HEIGHT,
-    } = glUtils.initFramebuffer(this.gl);
+    const { FRAMEBUFFER } = glUtils.initFramebuffer(this.gl);
     this.framebuffer = FRAMEBUFFER;
 
     this.v = `
@@ -49,6 +45,8 @@ export default class GrayPass implements IPass {
                 float gray = R*0.299 + G*0.587 + B*0.114;
             
                 gl_FragColor = vec4(vec3(gray), 1.0);
+                
+                
             }`;
 
     this.rectVertices = new Float32Array([
